@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders', # CORS (크로스오리진 설정)
     'rest_framework', # Django에서 RESTful API 작성을 도와줌,
-    'fortest',
 ]
 
 MIDDLEWARE = [
