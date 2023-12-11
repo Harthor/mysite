@@ -12,7 +12,7 @@ import WorkStudy from './pages/WorkStudy';
 import WorkHome from './pages/WorkHome';
 import HobbyHome from './pages/HobbyHome';
 import HobbyGame from './pages/HobbyGame';
-import HobbyMovieDramaAnimation from './pages/HobbyMovieDramaAnimation';
+import HobbyMovieDramaAnimation from './pages/HobbyMovieAnimation';
 
 const App: React.FC = () => {
   return (
@@ -23,7 +23,8 @@ const App: React.FC = () => {
           <Route index element={<WorkHome />}/>
           <Route path='info' element={<WorkInfo />}/>  
           <Route path='projects' element={<WorkProjects />}/>
-          <Route path='study' element={<WorkStudy />}/>
+          <Route path='study' element={<WorkStudy />} >
+          </Route>
         </Route>
         <Route path='/hobby' element={<HobbyLayout />}>
           <Route index element={<HobbyHome />} />

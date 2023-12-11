@@ -14,7 +14,7 @@ const HobbyNavbar: React.FC =  () => {
                                     <nav className="text-sm leading-6 font-semibold text-slate-700 dark:text-slate-200">
                                         <ul className="flex space-x-8 ">
                                             {[['게임', '/hobby/game'],
-                                              ['영화/드라마/애니메이션', '/hobby/mda']
+                                              ['영화/애니메이션', '/hobby/mda']
                                                 ].map(([title, url]) => (
                                                 <li>
                                                 <Link className='text-white hover:text-sky-300' to={url}>{title}</Link>

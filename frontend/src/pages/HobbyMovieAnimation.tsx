@@ -1,4 +1,4 @@
-const HobbyMovieDramaAnimation = () => {
+const HobbyMovieAnimation = () => {
   return (
     <div className="flex my-3">
       <div className="md:w-1/4 md:flex-none"></div>
@@ -8,4 +8,4 @@ const HobbyMovieDramaAnimation = () => {
   )
 }
 
-export default HobbyMovieDramaAnimation
+export default HobbyMovieAnimation

@@ -7,4 +7,4 @@ const Editor = ({ value, onChange }) => {
   )
 }
 
-export default Editor
+export default Editor 
