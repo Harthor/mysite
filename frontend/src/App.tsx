@@ -8,11 +8,10 @@ import NotFound from './components/NotFound';
 import Intro from './pages/Intro';
 import WorkInfo from './pages/WorkInfo';
 import WorkProjects from './pages/WorkProjects';
-import WorkStudy from './pages/WorkStudy';
 import WorkHome from './pages/WorkHome';
 import HobbyHome from './pages/HobbyHome';
-import HobbyGame from './pages/HobbyGame';
-import HobbyMovieDramaAnimation from './pages/HobbyMovieAnimation';
+import PostDetail from './pages/PostDetail';
+import PostList from './pages/PostList'
 
 const App: React.FC = () => {
   return (
@@ -23,13 +22,16 @@ const App: React.FC = () => {
           <Route index element={<WorkHome />}/>
           <Route path='info' element={<WorkInfo />}/>  
           <Route path='projects' element={<WorkProjects />}/>
-          <Route path='study' element={<WorkStudy />} >
-          </Route>
+          <Route path='study' element={<PostList category="study"/>} />
+          <Route path='study/post/:id' element={<PostDetail />} />
         </Route>
         <Route path='/hobby' element={<HobbyLayout />}>
           <Route index element={<HobbyHome />} />
-          <Route path='game' element={<HobbyGame />} />
-          <Route path='mda' element={<HobbyMovieDramaAnimation />} />
+          <Route path='game' element={<PostList category="game" />} />
+          <Route path='game/post/:id' element={<PostDetail/>} />
+          <Route path='ma' element={<PostList category="ma" />} />
+          <Route path='ma/post/:id' element={<PostDetail/>} />
+
         </Route> 
         <Route path="*" element={<NotFound />} />
       </Routes>

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.text import slugify
 
 class Category(models.Model):
     name = models.CharField(max_length = 255, null = False)
@@ -18,7 +19,8 @@ class SubCategory(models.Model):
 
 class Post(models.Model):
     title = models.CharField(max_length = 255, null = False)
-    category = models.ForeignKey(Category, on_delete = models.CASCADE)
+    slug = models.SlugField(unique = True, blank = True, allow_unicode = True)
+    category = models.ForeignKey(Category, null = False, on_delete = models.CASCADE)
     subcategory = models.ForeignKey(SubCategory, 
                                     on_delete = models.CASCADE, 
     )
@@ -33,6 +35,15 @@ class Post(models.Model):
     def __str__(self):
         return self.title
     
+    def save(self, *args, **kwargs):
+        # 슬러그 지정 안할 시 자동 생성
+        if not self.slug:
+            self.slug = slugify(self.title, allow_unicode=True)
+        super().save(*args, **kwargs)
+    
+    def get_slug_as_string(self):
+        return str(self.slug)
+
     def get_author_as_string(self):
         return str(self.author)
     
