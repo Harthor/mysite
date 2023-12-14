@@ -22,14 +22,14 @@ const App: React.FC = () => {
           <Route index element={<WorkHome />}/>
           <Route path='info' element={<WorkInfo />}/>  
           <Route path='projects' element={<WorkProjects />}/>
-          <Route path='study' element={<PostList category="study"/>} />
+          <Route path='study/:page' element={<PostList subject="work" category="study"/>} />
           <Route path='study/post/:id' element={<PostDetail />} />
         </Route>
         <Route path='/hobby' element={<HobbyLayout />}>
           <Route index element={<HobbyHome />} />
-          <Route path='game' element={<PostList category="game" />} />
+          <Route path='game/:page' element={<PostList subject="hobby" category="game" />} />
           <Route path='game/post/:id' element={<PostDetail/>} />
-          <Route path='ma' element={<PostList category="ma" />} />
+          <Route path='ma/:page' element={<PostList subject="hobby" category="ma" />} />
           <Route path='ma/post/:id' element={<PostDetail/>} />
 
         </Route> 

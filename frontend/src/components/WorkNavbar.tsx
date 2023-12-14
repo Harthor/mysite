@@ -14,7 +14,7 @@ const WorkNavbar: React.FC =  () => {
                         <div className="relative flex items-center ml-auto">
                             <nav className="text-md leading-6 font-semibold text-slate-700 dark:text-slate-200">
                                 <ul className="flex space-x-8">
-                                    {[['Info', '/work/info'], ['Projects', '/work/projects'], ['Study', '/work/study']]
+                                    {[['Info', '/work/info'], ['Projects', '/work/projects'], ['Study', '/work/study/1']]
                                     .map(([title, url]) => (
                                         <li className="hover:text-sky-300">
                                         <Link className="nav-link text-white" to={url}>{title}</Link>

@@ -9,7 +9,9 @@ class PostSerializer(serializers.ModelSerializer):
     author = serializers.CharField(source='get_author_as_string')
     category = serializers.CharField(source='get_category_as_string')
     subcategory = serializers.CharField(source='get_subcategory_as_string')
-
+    
+    # 시간 가공
+    created_at = serializers.DateTimeField(format = '%Y/%m/%d %H:%M')
     class Meta:
         model = Post
         # fields = ('id', 'slug', 'subcategory', 'title', 'author', 'created_at')
@@ -21,6 +23,9 @@ class PostDetailSerializer(serializers.ModelSerializer):
     author = serializers.CharField(source='get_author_as_string')
     category = serializers.CharField(source='get_category_as_string')
     subcategory = serializers.CharField(source='get_subcategory_as_string')
+
+    # 시간 가공
+    created_at = serializers.DateTimeField(format = '%Y/%m/%d %H:%M')
 
     class Meta:
         model = Post

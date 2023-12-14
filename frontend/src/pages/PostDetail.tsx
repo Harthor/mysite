@@ -10,7 +10,7 @@ type Post = {
     title: string;
     slug: string;
     content: string;
-    created_at: string;
+    created_at: Date;
 }
 
 const PostDetail: React.FC = () => {
@@ -19,7 +19,7 @@ const PostDetail: React.FC = () => {
 
     useEffect(() => {
         fetchData();
-    }, [id]);
+    }, []);
 
     const fetchData = async () => {
         try { 
@@ -34,8 +34,12 @@ const PostDetail: React.FC = () => {
 
     return (
         <div>
-            <h2>PostDetail</h2>
-            <p>Post: {post?.id}</p>
+            <h1>제목 : {post?.title}</h1>
+            <h2>대분류 : {post?.category}</h2>
+            <h2>소분류 : {post?.subcategory}</h2>
+            <h3>저자 : {post?.author}</h3>
+            <h3>작성일자 : {post?.created_at}</h3>
+            <p>본문 : {post?.content}</p>
         </div>
     )
 }
