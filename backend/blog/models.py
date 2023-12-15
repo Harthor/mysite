@@ -18,7 +18,7 @@ class SubCategory(models.Model):
 
 
 class Post(models.Model):
-    title = models.CharField(max_length = 255, null = False)
+    title = models.CharField(max_length = 50, null = False)
     slug = models.SlugField(unique = True, blank = True, allow_unicode = True)
     category = models.ForeignKey(Category, null = False, on_delete = models.CASCADE)
     subcategory = models.ForeignKey(SubCategory, 
