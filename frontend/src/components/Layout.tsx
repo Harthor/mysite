@@ -5,19 +5,19 @@ import WorkNavbar from './WorkNavbar'
 import HobbyNavbar from './HobbyNavbar'
 
 const Layout = () => {
-    const { subject } = useParams();
+    const { category } = useParams();
 
     return (
         <div className='flex flex-col h-screen'>
             {/* Navbar 부분 */}
             <div className='flex-none'>
-                { subject === 'work' ? <WorkNavbar /> : <HobbyNavbar />}
+                { category === 'work' ? <WorkNavbar /> : <HobbyNavbar />}
             </div>
             {/* 본문 부분 */}
             <div className='flex flex-1 mx-3 my-3'>
-                <div className='flex-1'></div>
-                <div className='flex-1'><Outlet /></div>
-                <div className='flex-1'></div>
+                <div className='w-1/4'></div>
+                <div className='w-1/2'><Outlet /></div>
+                <div className='w-1/4'></div>
             </div>
         </div>
     )

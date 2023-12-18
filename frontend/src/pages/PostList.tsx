@@ -6,7 +6,7 @@ type Post = {
     id: number;
     slug: string;
     category: string;
-    subcategory: string;
+    section: string;
     title: string;
     content: string;
     author: string;
@@ -34,7 +34,7 @@ const PostList: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
     const [totalPage, setTotalPage] = useState(1);
-    const { subject, category, page } = useParams(); 
+    const { category, section, page } = useParams(); 
     const currentPage = parseInt(page, 10) || 1; // 문자열 -> 숫자 변환, 실패 시 1이 기본값
     const navigate = useNavigate();
 
@@ -54,15 +54,13 @@ const PostList: React.FC = () => {
         return () => {
             setPosts([])
         }
-    }, [ category, currentPage ]);
+    }, [ section, currentPage ]);
 
     const fetchData = async () => {
         try { 
-            
-            console.log(`http://localhost:8000/api/blog/?category=${category}&page=${currentPage}&postperpage=${postsPerPage}`)
-            const response = await axios.get<pagniatedResponse>(`http://localhost:8000/api/blog?category=${category}&page=${currentPage}&postperpage=${postsPerPage}`)
+            const response = await axios.get<pagniatedResponse>(`http://localhost:8000/api/blog?section=${section}&page=${currentPage}&postperpage=${postsPerPage}`)
+
             setPosts(response.data.posts);
-            console.log(posts);
             setTotalPage(response.data.total_pages)
             setLoading(false);
         } catch (e) {
@@ -70,8 +68,8 @@ const PostList: React.FC = () => {
         }
     };
 
-    const handleWritePost = ( subject:string, category:string ) => {
-        navigate(`/${subject}/${category}/post/create`);
+    const handleWritePost = ( category:string, section:string ) => {
+        navigate(`/${category}/${section}/post/create`);
     }
 
     // slice는 인덱스 기반으로 동작한다
@@ -79,31 +77,31 @@ const PostList: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center container mx-auto mt-8">
         <div className="flex-none mb-4">
-            <h1>{category} 게시판</h1>
+            <h1>{section} 게시판</h1>
         </div>
 
-        <div className="flex-1">
+        <div className="flex-1 w-full">
         {/* 게시판에 글 나열 */}
         {posts.map((post: Post) => (
-                        <Link to ={`/${subject}/${category}/post/${post.id}`} className='text-black hover:text-gray'>
+                        <Link to ={`/${category}/${section}/post/${post.id}`} className='text-black hover:text-gray'>
                             <div key={post.id} className = "border p-3 m-2">
                                 
                                 <p className="text-gray-500 text-sm float-right">{formatDateTime(post.created_at)}</p>
                                 <p className="text-xl font-bold"></p>{post.title}
                                 
-                            <p className="text-gray-500 text-sm">{post.subcategory}</p>
+                            <p className="text-gray-500 text-sm">{post.section}</p>
                             <p className="mt-2 text-sm">{post.content.length > 100 ? `${post.content.substring(0, 100)}...` : post.content}</p>
 
                             </div>
                         </Link>
         ))}
 
-        <button onClick={() => handleWritePost(subject, category)}
+        <button onClick={() => handleWritePost(category, section)}
         className='float-right mt-0'>글 작성하기</button>
         </div>
 
         {/* 페이지네이션 */}
-        <div className="flex-none b-0">
+        <div className="flex-none b-0 w-full">
         {posts.length ? (
                 <>
                     {/* index는 0부터 시작한다. */}
@@ -111,7 +109,7 @@ const PostList: React.FC = () => {
                             const page = startPage + index;
                             return (
                                 <button key={page} 
-                                onClick={() => navigate(`/${subject}/${category}/${page}`)}>
+                                onClick={() => navigate(`/${category}/${section}/${page}`)}>
                                     {page}
                                 </button>
                             );
