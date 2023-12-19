@@ -5,9 +5,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-
 from .serializers import *
 from blog.models import *
+
+import json
 
 # class PostLV(ListView):
 #     model = Post
@@ -79,3 +80,43 @@ class SubSectionListView(APIView):
 
         return Response({'subsection' : serializer.data},
                         status = status.HTTP_200_OK)
+    
+class CreatePostAPIView(APIView):
+    # 프론트엔드에서 생성된 글을 DB에 저장함
+    http_method_names = ['post']
+
+    def post(self, request, *args, **kwargs):
+        try:
+            data = json.loads(request.body)
+            title = data.get('title')
+            content = data.get('content')
+            category_name = data.get('category')
+            section_name = data.get('section')
+            subsection_name = data.get('subsection')
+
+            # 이미지 처리
+            image_file = request.FILES.get('image')
+            category = Category.objects.get(name=category_name)
+            section = Section.objects.get(name=section_name)
+            subsection = SubSection.objects.get(name=subsection_name)
+
+            post = Post.objects.create(
+                title=title,
+                content=content,
+                image=image_file,
+                category=category,
+                section=section,
+                subsection=subsection,
+                author=request.user  # 현재 사용자로 설정
+            )
+
+            serializer = PostSerializer(post)
+            return Response(serializer.data, status = status.HTTP_201_CREATED)
+        except json.JSONDecodeError:
+            return Response({'status' : 'error', 'message' : '잘못된 JSON 형식입니다.'}, status = status.HTTP_400_BAD_REQUEST)
+        except Category.DoesNotExist:
+            return Response({'status' : 'error', 'message' : '카테고리를 찾을 수 없습니다.'}, status = status.HTTP_404_NOT_FOUND)
+        except Section.DoesNotExist:
+            return Response({'status' : 'error', 'message' : '섹션을 찾을 수 없습니다.'}, status = status.HTTP_404_NOT_FOUND)
+        except SubSection.DoesNotExist:
+            return Response({'status' : 'error', 'message' : '서브섹션을 찾을 수 없습니다.'}, status = status.HTTP_404_NOT_FOUND)
