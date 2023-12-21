@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'corsheaders', # CORS (크로스오리진 설정)
     'rest_framework', # Django에서 RESTful API 작성을 도와줌,
     'blog.apps.BlogConfig',
+    'imageapp.apps.ImageappConfig',
 ]
 
 MIDDLEWARE = [
