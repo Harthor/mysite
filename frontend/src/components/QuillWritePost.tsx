@@ -22,86 +22,80 @@ const QuillWritePost: React.FC = ()=> {
     const quillRef = useRef(null);
     const backend = 'http://localhost:8000';
 
-    // 자식 컴포넌트인 QuillEditor에 작성된 내용을 부모 컴포넌트에 가져옴
-    const handleContentChange = ( newContent : string ) => {
-        setContent(newContent);
-    }
-
-    // const handleImageUpload = (event) => {
-    //     const file = event.target.files[0];
-
-    //     const reader = new FileReader();
-    //     reader.onloadend = () => {
-    //         setImages([...images, reader.result]);
-    //     };
-    //     reader.readAsDataURL(file);
-    // }
-
     const handleSubsectionChange = (e) => {
         setSubsection(e.target.value);
     }
 
-    // section에 따라 subsection 불러오는 기능
+    // section(게시판)에 따라 subsection 불러오기
     const fetchSubsections = async () => {
         try {
           const response = await axios.get(backend + `/api/blog/subsection?section=${section}`);
           setSubsections(response.data.subsection);
         } catch (e) {
-          alert(`현재 ${e} 에러 발생 중`);
+          setIsAddingNewSubsection(true);
         }
       }
+
+    // subsection이 없는 경우 등록
+    const addSubsection = async () => {
+        try {
+        const formData = new FormData();
+        formData.append('subsection', subsection)
+        formData.append('section', section)
+
+        const response = await axios.post(backend + `/api/blog/subsection/create`, formData);
+        if (response.status === 201) {
+            console.log('소분류가 성공적으로 생성되었습니다.');
+            setSubsections((prevSubSections) => [...prevSubSections, subsection]);
+        } else {
+            console.log('소분류 생성 실패');
+        }
+        } catch (e) {
+            console.log(`addSubsection 에러 발생 - ${e}`)
+        }
+    }
+
+    const validateInputEmpty = (title, subsection, content) => {
+        if (title === "" || subsection === "" || content === "") {
+            throw new Error(alert("제목, 소분류, 내용 모든 값이 채워져야 합니다."))
+        }
+    }
 
     // 작성된 글 저장하기
     const handleSubmit = async () => {
         try {
-            console.log('title : ', title)
-            console.log('subsection : ', subsection)
-            console.log('content : ', content)
-            // const formData = new FormData();
-            // formData.append('title', title);
-            // formData.append('subsection', selectedSubSection);
-            // formData.append('content', content);
             
-            // console.log('Images : ', images);
-            // images.forEach((image, index) => {
-            //     const blob = dataURItoBlob(image);
-            //     formData.append(`image${index + 1}`, blob, `image${index + 1}.png`)
-            // })
+            const formData = new FormData();
+            validateInputEmpty(title, subsection, content)
 
-            // console.log(formData)
+            // subsection이 새로운 값이라면 백엔드에 추가
+            if ( !subsections.some(item => item.name === subsection) ) {
+                addSubsection();
+            }
 
-            // const response = await fetch(backend + 'api/blog/post/create', {
-            //     method: "POST",
-            //     body: formData,
-            // })
+            formData.append('title', title);
+            formData.append('subsection', subsection);
+            formData.append('content', content);
+            formData.append('category', category);
+            formData.append('section', section);
 
-            // console.log(response)
+            
+            console.log("요청 위치 : ", backend + '/api/blog/post/create')
 
-        //     if (response.ok) {
-        //         console.log('글이 성공적으로 생성되었습니다.');
-        //     } else {
-        //         console.error('글 생성에 실패했습니다.');
-        //     } 
+            const response = await axios.post(backend + '/api/blog/post/create', formData)
+
+            console.log(response)
+
+            if (response.status === 201) {
+                console.log('글이 성공적으로 생성되었습니다.');
+            } else {
+                console.error('글 생성에 실패했습니다.');
+            } 
         } catch (e) { 
             console.error('에러 발생 : ', e)
         }
     } 
 
-    // QuillEditor에 삽입된 이미지를 base64 URI로 추출,
-    // 추출된 이미지를 파일로 변환해 FormData를 사용해 다른 문자열들과 함께 백엔드로 전송한다.
-    const dataURItoBlob = (dataURI) => {
-        const byteString = atob(dataURI.split(',')[1]);
-        const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-
-        const ab = new ArrayBuffer(byteString.length);
-        const ia = new Uint8Array(ab);
-
-        for (let i=0; i < byteString.length; i++) {
-            ia[i] = byteString.charCodeAt(i);
-        }
-
-        return new Blob([ab], { type: mimeString });
-    }
 
     useEffect(() => {
         fetchSubsections();
@@ -151,31 +145,6 @@ const QuillWritePost: React.FC = ()=> {
                 onChange={(e) => setTitle(e.target.value)} />
             </div>
         </div>
-
-        {/* <div className='flex-1'>
-            <label >소분류</label>
-            <br />
-            { isAddingNewSubsection ? 
-            <input type="text" value={subsection} 
-            className="mt-1 p-2 border border-gray w-5/6"
-            onChange={handleSubsectionChange} 
-            placeholder='새로운 소분류 등록'/> :
-            <select value= {subsection} 
-            onChange = {handleSubsectionChange}
-            className = 'mt-1 p-2 border border-gray-300 rounded w-5/6'>
-                <option disabled>소분류를 고르시오</option>
-                {subsections.map((subsection) => (
-                    <option key={subsection.id} value={subsection.name}>
-                        {subsection.name}
-                    </option>
-                ))}
-            </select>
-            }
-            <button className="pl-1 float-r text-xs w-1/6"
-            onClick={() => setIsAddingNewSubsection(!isAddingNewSubsection)}>
-                {isAddingNewSubsection ? "선택하기" : "직접 입력"}
-            </button>   
-        </div> */}
 
         <div className='flex-1 w-full mt-4'>
             <label>본문</label>

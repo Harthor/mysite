@@ -18,9 +18,10 @@ class Section(models.Model):
     def get_category_as_string(self):
         return str(self.subsection)
 
-class SubSection(models.Model):
-    name = models.CharField(max_length = 64, null = False)
+class Subsection(models.Model):
+    name = models.CharField(max_length = 64, null = False, unique = True)
     section = models.ForeignKey(Section, on_delete = models.CASCADE)
+
 
     def __str__(self):
         return self.name
@@ -37,9 +38,9 @@ class Post(models.Model):
     section = models.ForeignKey(Section, 
                                 on_delete = models.CASCADE, 
     )
-    subsection = models.ForeignKey(SubSection, on_delete = models.CASCADE)
+    subsection = models.ForeignKey(Subsection, on_delete = models.CASCADE)
     content = models.TextField()
-    author = models.ForeignKey(User, on_delete = models.CASCADE)
+    author = models.ForeignKey(User, default = None, on_delete = models.CASCADE)
     created_at = models.DateTimeField(auto_now_add = True)
 
     class Meta:
@@ -49,10 +50,17 @@ class Post(models.Model):
     def __str__(self):
         return self.title
     
+
     def save(self, *args, **kwargs):
+        # 이미 생성된 객체의 필드 값을 변경하고 저장할 때 사용한다.
+
         # 슬러그 지정 안할 시 자동 생성
         if not self.slug:
             self.slug = slugify(self.title, allow_unicode=True)
+
+        if not self.author_id:
+            self.author = User.objects.get(username='dowrave')
+        
         super().save(*args, **kwargs)
     
     def get_slug_as_string(self):

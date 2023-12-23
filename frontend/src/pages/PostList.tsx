@@ -4,12 +4,9 @@ import axios from 'axios'
 
 type Post = {
     id: number;
-    slug: string;
-    category: string;
-    section: string;
+    subsection: string;
     title: string;
     content: string;
-    author: string;
     created_at: string;
 }
 
@@ -59,7 +56,7 @@ const PostList: React.FC = () => {
     const fetchData = async () => {
         try { 
             const response = await axios.get<pagniatedResponse>(`http://localhost:8000/api/blog?section=${section}&page=${currentPage}&postperpage=${postsPerPage}`)
-
+            console.log(response);
             setPosts(response.data.posts);
             setTotalPage(response.data.total_pages)
             setLoading(false);
@@ -89,7 +86,7 @@ const PostList: React.FC = () => {
                                 <p className="text-gray-500 text-sm float-right">{formatDateTime(post.created_at)}</p>
                                 <p className="text-xl font-bold"></p>{post.title}
                                 
-                            <p className="text-gray-500 text-sm">{post.section}</p>
+                            <p className="text-gray-500 text-sm">{post.subsection}</p>
                             <p className="mt-2 text-sm">{post.content.length > 100 ? `${post.content.substring(0, 100)}...` : post.content}</p>
 
                             </div>

@@ -1,18 +1,17 @@
 from django.shortcuts import get_object_or_404
+from django.utils.html import escape
 
 from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, generics
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from .serializers import *
 from blog.models import *
+from .forms import *
 
 import json
-
-# class PostLV(ListView):
-#     model = Post
-#     paginate_by = 3
 
 class PostListView(APIView):
 
@@ -48,12 +47,31 @@ class PostListView(APIView):
         except EmptyPage:
             posts = paginator.page(paginator.num_pages)
 
-        serializer = PostSerializer(posts, many = True)
+        serializer = PostSerializer(posts, many = True, context={'request' : request})
         print(page, serializer.data)
         return Response({'posts' : serializer.data,
                          'total_pages' : paginator.num_pages,
                          }, status=status.HTTP_200_OK)
 
+class PostCreateView(APIView):
+    def post(self, request, *args, **kwargs):
+        data = request.data.copy()
+
+        # 객체로 넣어야 함
+        data['author'] = User.objects.get(username='dowrave').id
+        data['created_at'] = timezone.now()
+
+        # 안전한 HTML 보장하기
+        data['content'] = escape(data['content'])
+
+        print(data)
+
+        serializer = PostSerializer(data = data, context = {'request' : request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status = status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class PostDetailView(APIView):
     def get(self, request):
@@ -61,62 +79,41 @@ class PostDetailView(APIView):
         id = request.GET.get('id')
 
         post = get_object_or_404(Post, id = id)
-        serializer = PostDetailSerializer(post)
+        serializer = PostSerializer(post, context={'request' : request})
+
         print(serializer.data)
         return Response(serializer.data, status = status.HTTP_200_OK)
 
 
-class SubSectionListView(APIView):
+class SubsectionListView(APIView):
 
     """section이 들어오면 거기에 맞는 subsection을 반환함"""
 
     def get(self, request):
         section = request.GET.get('section')
-
         section = get_object_or_404(Section, name__iexact = section)
-        subsections = SubSection.objects.filter(section = section) # 연결된 모든 객체 반환
-
+        subsections = Subsection.objects.filter(section = section) # 연결된 모든 객체 반환
         serializer = SubsectionSerializer(subsections, many = True)
 
         return Response({'subsection' : serializer.data},
                         status = status.HTTP_200_OK)
-    
-class CreatePostAPIView(APIView):
-    # 프론트엔드에서 생성된 글을 DB에 저장함
-    http_method_names = ['post']
+
+class SubsectionCreateView(APIView):
 
     def post(self, request, *args, **kwargs):
+
         try:
-            data = json.loads(request.body)
-            title = data.get('title')
-            content = data.get('content')
-            category_name = data.get('category')
-            section_name = data.get('section')
-            subsection_name = data.get('subsection')
+            section = request.data.get('section')
+            name = request.data.get('subsection')
 
-            # 이미지 처리
-            image_file = request.FILES.get('image')
-            category = Category.objects.get(name=category_name)
-            section = Section.objects.get(name=section_name)
-            subsection = SubSection.objects.get(name=subsection_name)
-
-            post = Post.objects.create(
-                title=title,
-                content=content,
-                image=image_file,
-                category=category,
-                section=section,
-                subsection=subsection,
-                author=request.user  # 현재 사용자로 설정
-            )
-
-            serializer = PostSerializer(post)
+            section = Section.objects.get(name = section)
+            subsection = Subsection.objects.create(name = name, 
+                                                   section = section)
+            
+            serializer = SubsectionSerializer(subsection)
             return Response(serializer.data, status = status.HTTP_201_CREATED)
-        except json.JSONDecodeError:
-            return Response({'status' : 'error', 'message' : '잘못된 JSON 형식입니다.'}, status = status.HTTP_400_BAD_REQUEST)
-        except Category.DoesNotExist:
-            return Response({'status' : 'error', 'message' : '카테고리를 찾을 수 없습니다.'}, status = status.HTTP_404_NOT_FOUND)
-        except Section.DoesNotExist:
-            return Response({'status' : 'error', 'message' : '섹션을 찾을 수 없습니다.'}, status = status.HTTP_404_NOT_FOUND)
-        except SubSection.DoesNotExist:
-            return Response({'status' : 'error', 'message' : '서브섹션을 찾을 수 없습니다.'}, status = status.HTTP_404_NOT_FOUND)
+        
+        except Exception as e:
+            return Response({'error' : str(e)}, status = status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        

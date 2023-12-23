@@ -1,17 +1,18 @@
 import React, { useState, useEffect }  from 'react';
 import { useParams,  } from 'react-router-dom';
 import axios from 'axios';
+import RichTextDisplay from '../components/RichTextDisplay';
 
-type Post = {
-    id: string;
-    author: string;
-    category: string;
-    subcategory: string;
-    title: string;
-    slug: string;
-    content: string;
-    created_at: Date;
-}
+// type Post = {
+//     id: string;
+//     author: string;
+//     category: string;
+//     subcategory: string;
+//     title: string;
+//     slug: string;
+//     content: string;
+//     created_at: Date;
+// }
 
 const PostDetail: React.FC = () => {
     const { id } = useParams(); 
@@ -32,14 +33,16 @@ const PostDetail: React.FC = () => {
         }
     };
 
+
+
     return (
         <div>
             <h1>제목 : {post?.title}</h1>
             <h2>대분류 : {post?.category}</h2>
             <h2>소분류 : {post?.subcategory}</h2>
-            <h3>저자 : {post?.author}</h3>
-            <h3>작성일자 : {post?.created_at}</h3>
-            <p>본문 : {post?.content}</p>
+            <h3>저자 : {post?.author.username}</h3>
+            
+            <RichTextDisplay htmlContent = {post?.content}/>
         </div>
     )
 }

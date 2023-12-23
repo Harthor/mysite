@@ -23,4 +23,4 @@ admin.site.register(Post, PostAdmin) # 이게 있어야 등록이 됨
 # 반대로 얘네를 등록하지 않는다면, 이미 있는 카테고리만 지정할 수 있다.
 admin.site.register(Category)
 admin.site.register(Section)
-admin.site.register(SubSection)
+admin.site.register(Subsection)
