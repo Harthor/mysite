@@ -1,8 +1,9 @@
 import React from 'react'
 import { PiBookOpenTextBold, PiGameControllerFill } from 'react-icons/pi'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const WorkNavbar: React.FC =  () => {
+    const navigate = useNavigate();
 
   return (
     <div className="sticky top-0 z-40 w-screen transition-colors bg-sky-900 lg:z-50 lg:border-b lg:border-slate-900/10  supports-backdrop-blur:bg-white/95">
@@ -23,11 +24,10 @@ const WorkNavbar: React.FC =  () => {
                                 </ul>
                             </nav>
                             <div className="flex color-gray items-center border-l border-slate-200 ml-6 pl-6">
-                                <Link to='/hobby'>
-                                    <button className="flex bg-red-900 hover:bg-red-500">
-                                        <PiGameControllerFill color="white" />
-                                    </button>
-                                </Link>
+                            <button className="flex bg-red-900 hover:bg-red-500"
+                            onClick={() => navigate('/hobby', { replace: true })}>
+                                <PiBookOpenTextBold color="white" />
+                            </button>
                             </div>
                     </div>
                 </div>
@@ -38,20 +38,3 @@ const WorkNavbar: React.FC =  () => {
 }
 
 export default WorkNavbar
-// {/* <div className="relative">
-
-// </div>
-// <nav className="text-sm leading-6 font-semi-bold text-slate-700">
-// <div className="relative">
-//     <ul className="flex space-x-8">
-
-//     </ul>
-// </div>
-// </nav> */}
-
-                    //     <div className="flex-none">
-                    //     </div>
-                    // <div className='flex justify-between gap-2'>
-
-
-                    // </div>

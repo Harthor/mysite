@@ -69,7 +69,7 @@ const QuillEditor: React.FC = memo(({ content, setContent, backend, quillRef }) 
             container : [
                 [{ 'header': [1, 2, 3, false]}],
                 ['bold', 'underline', 'blockquote', 'code-block'],
-                [{'color' : []}, {'background' : []}, {'align' : []}],
+                [{'color' : []}, {'background' : []}],
                 ['link', 'image', 'video'],
                 ],
             handlers: {

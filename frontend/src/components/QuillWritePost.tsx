@@ -18,7 +18,7 @@ const QuillWritePost: React.FC = ()=> {
     const [subsection, setSubsection] = useState('');
     const [content, setContent] = useState('');
     const { category, section } = useParams()
-    const [isAddingNewSubsection, setIsAddingNewSubsection] = useState(false);
+    const [isAddingNewSubsection, setIsAddingNewSubsection] = useState(true);
     const quillRef = useRef(null);
     const backend = 'http://localhost:8000';
 
@@ -28,12 +28,8 @@ const QuillWritePost: React.FC = ()=> {
 
     // section(게시판)에 따라 subsection 불러오기
     const fetchSubsections = async () => {
-        try {
-          const response = await axios.get(backend + `/api/blog/subsection?section=${section}`);
-          setSubsections(response.data.subsection);
-        } catch (e) {
-          setIsAddingNewSubsection(true);
-        }
+        const response = await axios.get(backend + `/api/blog/subsection?section=${section}`);
+        setSubsections(response.data.subsection);
       }
 
     // subsection이 없는 경우 등록
@@ -68,7 +64,10 @@ const QuillWritePost: React.FC = ()=> {
             const formData = new FormData();
             validateInputEmpty(title, subsection, content)
 
+            console.log(title, subsections, content, category, section);
+
             // subsection이 새로운 값이라면 백엔드에 추가
+            // subsections가 빈 배열이라면 subsections.some은 false이다
             if ( !subsections.some(item => item.name === subsection) ) {
                 addSubsection();
             }
@@ -103,8 +102,9 @@ const QuillWritePost: React.FC = ()=> {
     }, [])
 
     useEffect(() => {
-        if (subsections.length > 0) {
+        if (subsections && subsections.length > 0) {
             setSubsection(subsections[0].name);
+            setIsAddingNewSubsection(false)
         }
     }, [subsections])
 
@@ -148,7 +148,7 @@ const QuillWritePost: React.FC = ()=> {
 
         <div className='flex-1 w-full mt-4'>
             <label>본문</label>
-            <QuillEditor content={content} setContent = {setContent} backend={backend} quillRef={quillRef} />
+            <QuillEditor content={content} setContent={setContent} backend={backend} quillRef={quillRef} />
         </div>
 
         <button onClick={handleSubmit}>Submit</button>

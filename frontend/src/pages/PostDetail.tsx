@@ -33,16 +33,26 @@ const PostDetail: React.FC = () => {
         }
     };
 
-
-
     return (
-        <div>
-            <h1>제목 : {post?.title}</h1>
-            <h2>대분류 : {post?.category}</h2>
-            <h2>소분류 : {post?.subcategory}</h2>
-            <h3>저자 : {post?.author.username}</h3>
+        <div className="max-w-2xl mx-auto mt-8 p-4">
+            {post ? (
+                <>
+                <div>
+                    <p className="text-gray-500 text-l float-left">{post.subsection}</p>
+                    <p className="text-2xl font-bold mb-4">{post.title}</p>
+                    <p className='text-gray-600 text-sm mb-4 float-right'>{post.created_at}</p>
+                </div>
+                 <br />
+                <div>
+                    <RichTextDisplay htmlContent = {post?.content}/>
+                </div>
+                </>
+            ) : (
+                <p> Loading... </p>
+            )
+        }
             
-            <RichTextDisplay htmlContent = {post?.content}/>
+            
         </div>
     )
 }

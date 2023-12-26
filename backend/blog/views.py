@@ -24,12 +24,6 @@ class PostListView(APIView):
         page = request.GET.get('page', 1)
         postsPerPage = request.GET.get('postperpage', 5)
         
-
-        # 같은 카테고리 이름임에도 다르게 설정한 경우 
-        # DB에서의 검색은 다르게 진행함
-        if section == 'ma':
-            section = 'movieanimation'
- 
         if section:
             section = get_object_or_404(Section, name__iexact=section)
             posts = Post.objects.filter(section=section)
@@ -104,10 +98,11 @@ class SubsectionCreateView(APIView):
 
         try:
             section = request.data.get('section')
-            name = request.data.get('subsection')
+            subsection = request.data.get('subsection')
 
             section = Section.objects.get(name = section)
-            subsection = Subsection.objects.create(name = name, 
+
+            subsection = Subsection.objects.create(name = subsection, 
                                                    section = section)
             
             serializer = SubsectionSerializer(subsection)

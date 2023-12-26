@@ -34,7 +34,7 @@ class PostSerializer(serializers.ModelSerializer):
     
     def get_content(self, obj):
         if 'PostList' in self.context['request'].resolver_match.url_name:
-            return obj.content[:100]
+            return obj.content[:150]
         return obj.content
     
     def create(self, validated_data):
