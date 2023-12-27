@@ -1,7 +1,7 @@
 import React, { useState, useEffect }  from 'react';
 import { useParams,  } from 'react-router-dom';
 import axios from 'axios';
-import RichTextDisplay from '../components/RichTextDisplay';
+import QuillRead from '../components/QuillRead';
 
 // type Post = {
 //     id: string;
@@ -44,7 +44,7 @@ const PostDetail: React.FC = () => {
                 </div>
                  <br />
                 <div>
-                    <RichTextDisplay htmlContent = {post?.content}/>
+                    <QuillRead htmlContent = {post?.content}/>
                 </div>
                 </>
             ) : (

@@ -1,13 +1,13 @@
 import 'highlight.js/styles/monokai-sublime.min.css'
 import ReactQuill from 'react-quill'
-import React, { useRef, useState, useMemo, memo, useCallback } from 'react'
+import React, { useEffect, memo, useCallback } from 'react'
 import axios from 'axios'
 import 'react-quill/dist/quill.snow.css';
 
 
 // content, onChange는 부모 컴포넌트에서 정의되어 전달됨
 // memo : 
-const QuillEditor: React.FC = memo(({ content, setContent, backend, quillRef }) => {
+const QuillEditor: React.FC = memo(({ content, setContent, backend, quillRef, isReadOnly }) => {
     
 
     const uploadImage = useCallback(async (formData: FormData): Promise<string | null> => {
@@ -16,11 +16,10 @@ const QuillEditor: React.FC = memo(({ content, setContent, backend, quillRef }) 
             const response = await axios.post(uploadUrl, formData);
 
             if (response.status == 201) {
-                console.log('successful', response.data);
+
                 return response
 
             } else {
-                console.log('failed', response.statusText);
 
                 return null;
             }
@@ -64,20 +63,21 @@ const QuillEditor: React.FC = memo(({ content, setContent, backend, quillRef }) 
 
 
     // Quill에 추가하는 기능들
-    const modules = useMemo(() => ({
-        toolbar: {
-            container : [
-                [{ 'header': [1, 2, 3, false]}],
-                ['bold', 'underline', 'blockquote', 'code-block'],
-                [{'color' : []}, {'background' : []}],
-                ['link', 'image', 'video'],
-                ],
-            handlers: {
-                'image': imageHandler,
-            }
-        },
-    }), [imageHandler]);
-    
+    // useMemo는 의존성 배열이 바뀌지 않는 한, 이전에 계산된 값을 사용함
+    const modules = {
+            toolbar: {
+                container : [
+                    [{ 'header': [1, 2, 3, false]}],
+                    ['bold', 'underline', 'blockquote', 'code-block'],
+                    [{'color' : []}, {'background' : []}],
+                    ['link', 'image', 'video'],
+                    ],
+                handlers: {
+                    'image': imageHandler,
+                }
+            },
+        }
+
     // 에디터에서 허용하는 컨텐츠 형식
     const formats = [
         'header', 'font', 'size',
@@ -117,18 +117,27 @@ const QuillEditor: React.FC = memo(({ content, setContent, backend, quillRef }) 
         })
     }
 
+    useEffect(() => {
+        if (quillRef.current) {
+            const quillEditor = quillRef.current.editor;
+            const editorRoot = quillEditor.root;
 
+            editorRoot.style.minHeight = '100px';
+        }
+    }, [])
 
 
     return (
-        <ReactQuill
-        ref = {quillRef}
-        theme = 'snow'
-        modules = {modules}
-        formats = {formats}
-        value={content}
-        onChange={setContent}
-        />
+        <div className='full-height-container'>
+            <ReactQuill
+            ref = {quillRef}
+            theme = 'snow'
+            modules = {modules}
+            formats = {formats}
+            value={content}
+            onChange={setContent}
+            />
+        </div>
     )
 }
 )

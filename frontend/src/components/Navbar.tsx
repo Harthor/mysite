@@ -2,13 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { PiBookOpenTextBold, PiGameControllerFill } from 'react-icons/pi'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
-
-interface NavbarProps {
-  category: string
-}
-
-const Navbar: React.FC<NavbarProps> = (props) => {
-  const [category, setCategory] = useState<string>(useParams().category);
+const Navbar: React.FC<NavbarProps> = () => {
+  const [category, setCategory] = useState<string>(useParams().category || 'work');
   const navigate = useNavigate();
 
   const handleCategoryClick = (newCategory) => {
@@ -28,12 +23,11 @@ const Navbar: React.FC<NavbarProps> = (props) => {
   };
 
   useEffect(() => {
-    // 페이지가 로드될 때 현재 카테고리를 설정합니다.
-    setCategory(props.category || 'work'); // 타입을 지정해도 || 'work'는 넣어야 작동한다. 아니면 undefined 이슈.
-  }, [props.category]);
+  },
+    [category]);
 
   return (
-    <div className={`sticky top-0 z-40 w-screen transition-colors bg-${
+    <div className={`sticky flex-none top-0 z-40 w-screen transition-colors bg-${
       category === 'work' ? 'sky-900' : 'red-900'
     } lg:z-50 lg:border-b lg:border-slate-900/10  supports-backdrop-blur:bg-white/95`}>
       <div className="max-w-8xl mx-auto">

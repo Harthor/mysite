@@ -115,13 +115,12 @@ const PostList: React.FC = () => {
     // slice는 인덱스 기반으로 동작한다
 
   return (
-    <div className="flex flex-col items-center justify-center container mx-auto mt-8">
-        <div className="flex-none mb-4">
+    <div className="flex flex-col items-center justify-center container mx-auto mt-8 flex-shrink-0 w-full">
+        <div className="flex-none">
             <h1>{section} 게시판</h1>
         </div>
-
-        <section className='text-gray-600 body-font overflow-hidden'>
-            <div className='container px-5 py-24 mx-auto'>
+        <section className='text-gray-600 body-font overflow-hidden '>
+            <div className='container px-5 py-12 mx-auto'>
                 <div className='-my-8 divide-y-2 divide-gray-100'>
                     {/* 게시판에 글 나열 */}
                     {posts.map((post: Post) => (
@@ -162,9 +161,9 @@ const PostList: React.FC = () => {
                         ) 
                         : <></>
                     }
-                    <button onClick={() => handleWritePost(category, section)}
-                        className='float-right mt-0 px-3 py-2 font-bold outline-none focus:ring-4 shadow-lg transform active:scale-90 transition-transform'>
-                        <HiOutlinePencilSquare class='inline' size='24'/>글쓰기
+                        <button onClick={() => handleWritePost(category, section)}
+                            className='float-right mt-0 px-3 py-2 font-bold outline-none focus:ring-4 shadow-lg transform active:scale-90 transition-transform'>
+                            <HiOutlinePencilSquare class='inline' size='24'/>글쓰기
                         </button>
                     </div>
                 </div>
