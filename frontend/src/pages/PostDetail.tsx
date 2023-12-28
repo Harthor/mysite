@@ -1,26 +1,22 @@
 import React, { useState, useEffect }  from 'react';
-import { useParams,  } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import QuillRead from '../components/QuillRead';
-
-// type Post = {
-//     id: string;
-//     author: string;
-//     category: string;
-//     subcategory: string;
-//     title: string;
-//     slug: string;
-//     content: string;
-//     created_at: Date;
-// }
+import { CiBoxList } from "react-icons/ci";
 
 const PostDetail: React.FC = () => {
-    const { id } = useParams(); 
+    const { category, section, id } = useParams(); 
     const [post, setPost] = useState<Post[]>();
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchData();
     }, []);
+
+    const handleNavigate = () => {
+        // '/'부터 시작하면 절대경로임
+        navigate(`/${category}/${section}/1`) 
+    }
 
     const fetchData = async () => {
         try { 
@@ -34,17 +30,20 @@ const PostDetail: React.FC = () => {
     };
 
     return (
-        <div className="max-w-2xl mx-auto mt-8 p-4">
+        <div className="max-w-2xl mx-auto mt-2 p-4">
             {post ? (
                 <>
-                <div>
-                    <p className="text-gray-500 text-l float-left">{post.subsection}</p>
-                    <p className="text-2xl font-bold mb-4">{post.title}</p>
-                    <p className='text-gray-600 text-sm mb-4 float-right'>{post.created_at}</p>
+                <div className="flex flex-col items-center px-4 mb-4">
+                    <h1 className="text-3xl font-semibold mb-2 py-1">{post.title}</h1>
+                        <div className="flex w-full items-center">
+                            <div className="flex-grow text-lg text-gray-700">{post.subsection}</div>
+                            <div className="text-gray-500 text-sm">{post.created_at}</div>
+                        </div>
                 </div>
-                 <br />
-                <div>
+                
+                <div className='px-3'> 
                     <QuillRead htmlContent = {post?.content}/>
+                    <button className='float-right text-xs bg-blue-200 font-semibold mx-2' onClick={handleNavigate}><CiBoxList class="inline"/>게시판</button>
                 </div>
                 </>
             ) : (

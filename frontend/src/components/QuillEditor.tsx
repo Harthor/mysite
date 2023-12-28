@@ -1,6 +1,7 @@
-import 'highlight.js/styles/monokai-sublime.min.css'
-import ReactQuill from 'react-quill'
 import React, { useEffect, memo, useCallback } from 'react'
+import ReactQuill from 'react-quill';
+import hljs from 'highlight.js';
+import 'highlight.js/styles/github.css';
 import axios from 'axios'
 import 'react-quill/dist/quill.snow.css';
 
@@ -8,7 +9,6 @@ import 'react-quill/dist/quill.snow.css';
 // content, onChange는 부모 컴포넌트에서 정의되어 전달됨
 // memo : 
 const QuillEditor: React.FC = memo(({ content, setContent, backend, quillRef, isReadOnly }) => {
-    
 
     const uploadImage = useCallback(async (formData: FormData): Promise<string | null> => {
         try {
@@ -48,9 +48,8 @@ const QuillEditor: React.FC = memo(({ content, setContent, backend, quillRef, is
             formData.append('image', file); // formData에 이미지 추가
             
             const response = await uploadImage(formData); // 비동기 호출
-            console.log(response)
             const imageUrl = `${backend}` + response?.data.imageUrl;
-            console.log(imageUrl)
+
              // ReactQuill 노드에 대한 메서드 호출을 위해 Ref가 필요하다
              // getEditor() : 편집기를 지원하는 Quill 인스턴스를 반환
              if (imageUrl) {
@@ -59,7 +58,6 @@ const QuillEditor: React.FC = memo(({ content, setContent, backend, quillRef, is
              }
 
         },  [backend, quillRef]);
-
 
 
     // Quill에 추가하는 기능들
@@ -75,7 +73,7 @@ const QuillEditor: React.FC = memo(({ content, setContent, backend, quillRef, is
                 handlers: {
                     'image': imageHandler,
                 }
-            },
+            }
         }
 
     // 에디터에서 허용하는 컨텐츠 형식
@@ -83,7 +81,8 @@ const QuillEditor: React.FC = memo(({ content, setContent, backend, quillRef, is
         'header', 'font', 'size',
         'bold', 'underline', 'blockquote', 'code-block',
         'list', 'bullet', 'indent',
-        'link', 'image'
+        'color', 'background',
+        'link', 'image', 'video',
     ]
 
     const compressImage = async (file) => {
@@ -118,12 +117,7 @@ const QuillEditor: React.FC = memo(({ content, setContent, backend, quillRef, is
     }
 
     useEffect(() => {
-        if (quillRef.current) {
-            const quillEditor = quillRef.current.editor;
-            const editorRoot = quillEditor.root;
-
-            editorRoot.style.minHeight = '100px';
-        }
+        // 여기에 입력
     }, [])
 
 

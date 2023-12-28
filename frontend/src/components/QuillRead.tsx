@@ -1,5 +1,5 @@
 import ReactQuill from "react-quill"
-
+import 'react-quill/dist/quill.snow.css';
 
 const QuillRead = ( { htmlContent }) => {
 
@@ -16,8 +16,13 @@ const QuillRead = ( { htmlContent }) => {
     }
 
     return (
-    <div className='container p-4'>
-        <ReactQuill modules = {modules} value = {textArea} readOnly = {true} />
+    <div>
+        <ReactQuill 
+        modules={modules} 
+        value={textArea} 
+        readOnly={true} 
+        theme='snow'
+        />
     </div>
     )
 }

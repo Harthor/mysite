@@ -99,14 +99,14 @@ const WritePost: React.FC = ()=> {
 
   return (
     <section className='text-gray-600 body-font'>
-      <div className='container px-5 py-24 mx-auto'>
+      <div className='container px-5 w-1/2 mx-auto'>
         <div className='flex flex-row flex-1/6'>
             <div className='w-1/6 text-xs'>
                 <label>소분류</label>
                 <br />
                 { isAddingNewSubsection ? 
                     <input type="text" value={subsection} 
-                    className="text-bold border border-gray w-5/6 p-1"
+                    className="border border-gray rounded w-5/6 p-1"
                     onChange={handleSubsectionChange} 
                     placeholder='새로운 소분류 등록'/> :
                     <select value= {subsection} 
@@ -118,11 +118,11 @@ const WritePost: React.FC = ()=> {
                                 {subsection.name}
                             </option>
                     ))}
-                </select>
+                    </select>
                 }
-                <button className="pl-1 float-r text-xs"
+                <button className="px-1 float-r text-xs"
                 onClick={() => setIsAddingNewSubsection(!isAddingNewSubsection)}>
-                    {isAddingNewSubsection ? "선택하기" : "직접 입력"}
+                    {isAddingNewSubsection ? "선택하기" : "직접입력"}
                 </button>   
             </div>
             <div className='w-5/6 text-xs flex-5/6'>
@@ -133,13 +133,13 @@ const WritePost: React.FC = ()=> {
             </div>
         </div>
 
-        <div className='flex-1 w-full mt-4'>
+        <div className='flex-1 mt-4'>
             <label>본문</label>
             <QuillEditor content={content} setContent={setContent} backend={backend} quillRef={quillRef} />
         </div>
             
-        <div className='flex-1'>
-          <button onClick={handleSubmit}>Submit</button>
+        <div className='flex-1 float-right mt-2'>
+          <button className="bg-blue-600 text-white" onClick={handleSubmit}>Submit</button>
         </div>
       </div>
     </section>
