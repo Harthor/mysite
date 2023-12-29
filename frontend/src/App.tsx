@@ -10,6 +10,7 @@ import PostList from './pages/PostList'
 import WritePost from './pages/WritePost';
 import Home from './pages/Home';
 
+import 'highlight.js/styles/github.css';
 
 const App: React.FC = () => {
 

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import ReactQuill from 'react-quill'
 import axios from 'axios'
+import hljs from 'highlight.js'
 import QuillEditor from '../components/QuillEditor'
 
 const WritePost: React.FC = ()=> {
@@ -10,7 +12,7 @@ const WritePost: React.FC = ()=> {
     const [content, setContent] = useState('');
     const { category, section } = useParams()
     const [isAddingNewSubsection, setIsAddingNewSubsection] = useState(true);
-    const quillRef = useRef(null);
+    const quillRef = useRef<ReactQuill>(null);
     const backend = 'http://localhost:8000';
     const navigate = useNavigate();
 
