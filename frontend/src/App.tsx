@@ -10,12 +10,17 @@ import PostList from './pages/PostList'
 import WritePost from './pages/WritePost';
 import Home from './pages/Home';
 
+import ScrollToTop from './components/ScrollToTop';
+
 import 'highlight.js/styles/github.css';
+
+
 
 const App: React.FC = () => {
 
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Intro />} />
         <Route path=":category/" element={<Layout />}>

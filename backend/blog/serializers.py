@@ -25,17 +25,12 @@ class PostSerializer(serializers.ModelSerializer):
             fields = {
                 'id' : serializers.IntegerField(read_only = True),
                 'title' : serializers.CharField(),
-                'content': serializers.SerializerMethodField(),
+                'preview': serializers.CharField(),
                 'subsection': serializers.CharField(),
                 'created_at': serializers.DateTimeField(format='%Y/%m/%d %H:%M'),
             }
         
         return fields
-    
-    def get_content(self, obj):
-        if 'PostList' in self.context['request'].resolver_match.url_name:
-            return obj.content[:150]
-        return obj.content
     
     def create(self, validated_data):
         print(validated_data)

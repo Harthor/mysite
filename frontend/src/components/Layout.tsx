@@ -9,7 +9,6 @@ const Layout: React.FC = () => {
       {/* 현재 h = 15 차지 */}
       <Navbar className="absolute top-0 left-0 w-full" /> 
       <div className="flex flex-row h-screen mt-4">
-        {/* 메뉴 바 */}
         {/* 본문 */}
         <div className='flex-none w-1/8 lg:hidden'>
           ?

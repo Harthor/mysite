@@ -54,9 +54,12 @@ const WritePost: React.FC = ()=> {
     // 작성된 글 저장하기
     const handleSubmit = async () => {
         try {
-            
+            // 
+            const currentContent = quillRef.current?.getEditor().root.innerHTML;
+
             const formData = new FormData();
-            validateInputEmpty(title, subsection, content)
+            console.log(title, subsection, currentContent)
+            validateInputEmpty(title, subsection, currentContent)
 
             // subsection이 새로운 값이라면 백엔드에 추가
             // subsections가 빈 배열이라면 subsections.some은 false이다
@@ -66,12 +69,11 @@ const WritePost: React.FC = ()=> {
 
             formData.append('title', title);
             formData.append('subsection', subsection);
-            formData.append('content', content);
+            formData.append('content', currentContent);
             formData.append('category', category);
             formData.append('section', section);
 
             const response = await axios.post(backend + '/api/blog/post/create', formData)
-
           
             if (response.status === 201) {
                 alert('글이 성공적으로 생성되었습니다.');
@@ -96,6 +98,10 @@ const WritePost: React.FC = ()=> {
             setIsAddingNewSubsection(false)
         }
     }, [subsections])
+
+    useEffect(() => {
+        setContent(content);
+    }, [content]);
 
 
 

@@ -12,6 +12,9 @@ from blog.models import *
 from .forms import *
 
 import json
+import re
+from bs4 import BeautifulSoup, NavigableString # 태그가 아닌 문자열
+import html
 
 class PostListView(APIView):
 
@@ -30,9 +33,24 @@ class PostListView(APIView):
         else:
             posts = Post.objects.all()
 
+        # 미리보기를 위해 posts 가공
+        preview_posts = []
+        for post in posts:
+
+            preview_text = self.extract_preview_text(post.content)
+
+            preview_post = {
+                'id' : post.id,
+                'title' : post.title,
+                'preview' : preview_text,
+                'subsection' : post.subsection,
+                'created_at' : post.created_at
+            }
+            preview_posts.append(preview_post)
+
         # 페이지네이터 구현
         # 얘는 pagniator에 의해 정해진 갯수의 데이터만을 다시 보내게 됨
-        paginator = Paginator(posts, postsPerPage)
+        paginator = Paginator(preview_posts, postsPerPage)
         
         try:
             posts = paginator.page(page)
@@ -42,10 +60,28 @@ class PostListView(APIView):
             posts = paginator.page(paginator.num_pages)
 
         serializer = PostSerializer(posts, many = True, context={'request' : request})
-        print(page, serializer.data)
         return Response({'posts' : serializer.data,
                          'total_pages' : paginator.num_pages,
                          }, status=status.HTTP_200_OK)
+    
+    def extract_preview_text(self, html_content):
+        soup = BeautifulSoup(html_content, 'lxml')
+
+        p_tags = soup.find_all('p')
+        p_text = ''
+
+        for p in p_tags:
+            # 각 p 태그의 내용을 다시 파싱
+            inner_soup = BeautifulSoup(html.unescape(str(p)), 'lxml')
+
+            # 원하지 않는 태그 제거
+            for tag in inner_soup.find_all(['a', 'img', 'iframe', 'pre']):
+                tag.extract()
+
+            # 남은 텍스트 추출
+            p_text += ' ' + inner_soup.get_text(separator=" ", strip=True)
+
+        return p_text[:150]
 
 class PostCreateView(APIView):
     def post(self, request, *args, **kwargs):

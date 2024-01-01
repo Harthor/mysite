@@ -7,7 +7,7 @@ type Post = {
     id: number;
     subsection: string;
     title: string;
-    content: string;
+    preview: string;
     created_at: string;
 }
 
@@ -83,9 +83,9 @@ const PostList: React.FC = () => {
         
         // body 내의 모든 자식 요소 가져오기
         const childNodes = Array.from(doc.body.childNodes);
-        console.log('childNodes : ', childNodes)
+        console.log('textData : ', childNodes[0].data)
 
-        // 내부 글 추출
+        // 미리보기
         const extractedContentArray: string[] = [];
         childNodes.forEach(node => {
 
@@ -132,7 +132,7 @@ const PostList: React.FC = () => {
                             <Link to ={`/${category}/${section}/post/${post.id}`}>
                                 <div className='md:flex-grow'>
                                     <h2 className="text-2xl font-medium text-gray-700 title-font mb-2">{post.title}</h2>
-                                    <p className="leading-relaxed text-gray-500">{getPreviewContent(post.content)}</p>
+                                    <p className="leading-relaxed text-gray-500">{post.preview}</p>
                                 </div>
                             </Link>
                         </div>
