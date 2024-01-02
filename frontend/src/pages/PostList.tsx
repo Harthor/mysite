@@ -4,7 +4,7 @@ import axios from 'axios'
 import { HiOutlinePencil, HiOutlinePencilSquare } from 'react-icons/hi2'
 
 type Post = {
-    id: number;
+    slug: string;
     subsection: string;
     title: string;
     preview: string;
@@ -46,7 +46,6 @@ const PostList: React.FC = () => {
     useEffect(() => {
         fetchData();
     
-        
             // 컴포넌트 언마운트 시 이전 데이터 초기화
             // 카테고리가 달라지는데도 이전 카테고리 게시판이 남는 현상 수정
         return () => {
@@ -62,50 +61,8 @@ const PostList: React.FC = () => {
             setTotalPage(response.data.total_pages)
             setLoading(false);
         } catch (e) {
-            alert(`현재 ${e} 에러 발생 중`)
+            alert(`현재 ${e.message} 에러 발생 중`)
         }
-    };
-
-    const stripHtmlTags = (htmlString: string): string => {
-        // getPreviewContent에서 쓰이며, HTML 태그를 제거합니다. 링크도 제거되네요..!
-        const doc = new DOMParser().parseFromString(htmlString, 'text/html');
-        const textContent = doc.body.textContent || '';
-        return textContent.trim();
-    }
-
-    const getPreviewContent = ( htmlString: string ) => {
-
-        // 백엔드에서 List에 본문을 가져올 때는 HTML 태그를 포함, 
-        // 150글자까지 가져옵니다. 이 중 p태그로 열고 닫히는 지점은 모두 표시합니다.
-    
-        // HTML 문자열을 DOM으로 파싱
-        const doc = new DOMParser().parseFromString(htmlString, 'text/html');
-        
-        // body 내의 모든 자식 요소 가져오기
-        const childNodes = Array.from(doc.body.childNodes);
-        console.log('textData : ', childNodes[0].data)
-
-        // 미리보기
-        const extractedContentArray: string[] = [];
-        childNodes.forEach(node => {
-
-            if (node.nodeType === 3) {
-                // 텍스트 노드 - <p> 태그 내부 텍스트 추출
-
-                const matches = node.nodeValue?.match(/<p>(.*?)<\/p>/g);
-                console.log('matches : ', matches)
-                if (matches) {
-                    matches.forEach(match => {
-                        const textContent = stripHtmlTags(match);
-                        extractedContentArray.push(textContent);
-                    })
-                } 
-            } 
-        })
-
-        const extractedContent = extractedContentArray.join(' ');
-
-        return extractedContent;
     };
 
     const handleWritePost = ( category:string, section:string ) => {
@@ -127,9 +84,9 @@ const PostList: React.FC = () => {
                         <div className='py-8 flex flex-wrap md:flex-nowrap'>
                             <div className="md:w-1/4 md:mb-0 mb-6 flex-shrink-0 flex flex-col" >
                                 <span className='font-semibold title-font text-gray-700'>{post.subsection}</span>
-                                <span className='mt-1 text-gray-500 text-sm'>{post.created_at}</span>
+                                <span className='mt-1 text-gray-500 text-sm'>{formatDateTime(post.created_at)}</span>
                             </div>
-                            <Link to ={`/${category}/${section}/post/${post.id}`}>
+                            <Link to ={`/${category}/${section}/post/${post.slug}`}>
                                 <div className='md:flex-grow'>
                                     <h2 className="text-2xl font-medium text-gray-700 title-font mb-2">{post.title}</h2>
                                     <p className="leading-relaxed text-gray-500">{post.preview}</p>

@@ -23,7 +23,7 @@ class PostSerializer(serializers.ModelSerializer):
         if 'PostList' in self.context['request'].resolver_match.url_name:
             # List 필드 선택
             fields = {
-                'id' : serializers.IntegerField(read_only = True),
+                'slug' : serializers.SlugField(read_only = True), # 읽기 전용 - 수정 불가
                 'title' : serializers.CharField(),
                 'preview': serializers.CharField(),
                 'subsection': serializers.CharField(),

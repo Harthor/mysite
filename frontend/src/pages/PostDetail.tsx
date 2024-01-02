@@ -2,10 +2,12 @@ import React, { useState, useEffect }  from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import QuillRead from '../components/QuillRead';
-import { CiBoxList } from "react-icons/ci";
+import { CiBoxList, CiEdit } from "react-icons/ci";
+import { RiDeleteBinLine } from "react-icons/ri";
+
 
 const PostDetail: React.FC = () => {
-    const { category, section, id } = useParams(); 
+    const { category, section, slug } = useParams(); 
     const [post, setPost] = useState<Post[]>();
     const navigate = useNavigate();
 
@@ -13,15 +15,19 @@ const PostDetail: React.FC = () => {
         fetchData();
     }, []);
 
-    const handleNavigate = () => {
+    const navigateToList = () => {
         // '/'부터 시작하면 절대경로임
         navigate(`/${category}/${section}/1`) 
     }
 
+    const navigateToEditPost = () => {
+        navigate(`/${category}/${section}/edit/${slug}`)
+    }
+
     const fetchData = async () => {
         try { 
-            console.log(`http://localhost:8000/api/blog/post/?id=${id}`)
-            const response = await axios.get<Post>(`http://localhost:8000/api/blog/post/?id=${id}`)
+            console.log(`http://localhost:8000/api/blog/post/?slug=${slug}`)
+            const response = await axios.get<Post>(`http://localhost:8000/api/blog/post/?slug=${slug}`)
             console.log(response)
             setPost(response.data)
         } catch (e) {
@@ -43,7 +49,17 @@ const PostDetail: React.FC = () => {
                 
                 <div className='px-3'> 
                     <QuillRead htmlContent = {post?.content}/>
-                    <button className='float-right text-xs bg-blue-200 font-semibold mx-2' onClick={handleNavigate}><CiBoxList class="inline"/>게시판</button>
+                    <div className='mt-1'>
+                    <button className='flex items-center justify-center float-left text-xs bg-gray-100 font-semibold mr-2 px-2' onClick={navigateToEditPost}>
+                        <CiEdit class="inline mr-1" size="20"/> 수정
+                    </button>
+                    <button className='flex items-center justify-center float-left text-xs bg-red-300 font-semibold px-2' >
+                        <RiDeleteBinLine class="inline mr-1" size="20"/> 삭제
+                    </button>
+                    <button className='flex items-center justify-center float-right text-xs bg-blue-200 font-semibold ml-2 px-2' onClick={navigateToList}>
+                        <CiBoxList class="inline mr-1" size="20"/> 게시판
+                    </button>
+                    </div>
                 </div>
                 </>
             ) : (

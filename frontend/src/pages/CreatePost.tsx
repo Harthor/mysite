@@ -5,7 +5,7 @@ import axios from 'axios'
 import hljs from 'highlight.js'
 import QuillEditor from '../components/QuillEditor'
 
-const WritePost: React.FC = ()=> {
+const CreatePost: React.FC = ()=> {
     const [title, setTitle] = useState('')
     const [subsections, setSubsections] = useState([])
     const [subsection, setSubsection] = useState('');
@@ -45,21 +45,30 @@ const WritePost: React.FC = ()=> {
         }
     }
 
-    const validateInputEmpty = (title, subsection, content) => {
+    const _validateTitle = () => {
+        // 슬러그를 생성할 수 있는 제목인지 검사한다.
+        const isValidSlug = title.match(/^[a-zA-Z가-힣0-9\s]*$/);
+        return isValidSlug;
+    }
+
+    const validateInput = (title, subsection, content) => {
+        console.log(title, subsection, content)
+
         if (title === "" || subsection === "" || content === "") {
-            throw new Error(alert("제목, 소분류, 내용 모든 값이 채워져야 합니다."))
+            throw new Error("제목, 소분류, 내용이 모두 채워져야 함")
         }
     }
 
     // 작성된 글 저장하기
     const handleSubmit = async () => {
         try {
-            // 
+
             const currentContent = quillRef.current?.getEditor().root.innerHTML;
+            const parsedContent = currentContent.replace(/<[^>]*>/g, '').replace(/\s+/g, '');
 
             const formData = new FormData();
-            console.log(title, subsection, currentContent)
-            validateInputEmpty(title, subsection, currentContent)
+            
+            validateInput(title, subsection, parsedContent)
 
             // subsection이 새로운 값이라면 백엔드에 추가
             // subsections가 빈 배열이라면 subsections.some은 false이다
@@ -82,7 +91,7 @@ const WritePost: React.FC = ()=> {
                alert('글 생성에 실패했습니다.');
             } 
         } catch (e) { 
-            alert('에러 발생 : ', e)
+            alert('글 생성 중 에러 발생 : ' + e.message)
         }
     } 
 
@@ -154,4 +163,4 @@ const WritePost: React.FC = ()=> {
   )
 }
 
-export default WritePost
+export default CreatePost

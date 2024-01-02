@@ -7,7 +7,7 @@ import NotFound from './components/NotFound';
 import Intro from './pages/Intro';
 import PostDetail from './pages/PostDetail';
 import PostList from './pages/PostList'
-import WritePost from './pages/WritePost';
+import CreatePost from './pages/CreatePost';
 import Home from './pages/Home';
 
 import ScrollToTop from './components/ScrollToTop';
@@ -26,8 +26,8 @@ const App: React.FC = () => {
         <Route path=":category/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path=":section/:page" element={<PostList />} />
-          <Route path=":section/post/create" element={<WritePost />} />
-          <Route path=":section/post/:id" element={<PostDetail />} />
+          <Route path=":section/post/create" element={<CreatePost />} />
+          <Route path=":section/post/:slug" element={<PostDetail />} />
         </Route>
         <Route path="not-found" element={<NotFound />} />
 

@@ -5,16 +5,16 @@ from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework import status, generics
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 
 from .serializers import *
 from blog.models import *
 from .forms import *
+from .utils import extract_preview_text, pagniate_queryset
 
 import json
 import re
-from bs4 import BeautifulSoup, NavigableString # 태그가 아닌 문자열
-import html
+
 
 class PostListView(APIView):
 
@@ -24,8 +24,8 @@ class PostListView(APIView):
         url은 api/blog/{section_name}으로 접근합니다.
         """
         section = request.GET.get('section')
-        page = request.GET.get('page', 1)
-        postsPerPage = request.GET.get('postperpage', 5)
+        now_page = request.GET.get('page', 1)
+        posts_per_page = request.GET.get('postperpage', 5)
         
         if section:
             section = get_object_or_404(Section, name__iexact=section)
@@ -37,10 +37,10 @@ class PostListView(APIView):
         preview_posts = []
         for post in posts:
 
-            preview_text = self.extract_preview_text(post.content)
+            preview_text = extract_preview_text(post.content)
 
             preview_post = {
-                'id' : post.id,
+                'slug' : post.slug,
                 'title' : post.title,
                 'preview' : preview_text,
                 'subsection' : post.subsection,
@@ -50,38 +50,12 @@ class PostListView(APIView):
 
         # 페이지네이터 구현
         # 얘는 pagniator에 의해 정해진 갯수의 데이터만을 다시 보내게 됨
-        paginator = Paginator(preview_posts, postsPerPage)
-        
-        try:
-            posts = paginator.page(page)
-        except PageNotAnInteger:
-            posts = paginator.page(1)
-        except EmptyPage:
-            posts = paginator.page(paginator.num_pages)
+        posts, total_pages = pagniate_queryset(preview_posts, now_page, posts_per_page)
 
         serializer = PostSerializer(posts, many = True, context={'request' : request})
         return Response({'posts' : serializer.data,
-                         'total_pages' : paginator.num_pages,
+                         'total_pages' : total_pages,
                          }, status=status.HTTP_200_OK)
-    
-    def extract_preview_text(self, html_content):
-        soup = BeautifulSoup(html_content, 'lxml')
-
-        p_tags = soup.find_all('p')
-        p_text = ''
-
-        for p in p_tags:
-            # 각 p 태그의 내용을 다시 파싱
-            inner_soup = BeautifulSoup(html.unescape(str(p)), 'lxml')
-
-            # 원하지 않는 태그 제거
-            for tag in inner_soup.find_all(['a', 'img', 'iframe', 'pre']):
-                tag.extract()
-
-            # 남은 텍스트 추출
-            p_text += ' ' + inner_soup.get_text(separator=" ", strip=True)
-
-        return p_text[:150]
 
 class PostCreateView(APIView):
     def post(self, request, *args, **kwargs):
@@ -106,9 +80,9 @@ class PostCreateView(APIView):
 class PostDetailView(APIView):
     def get(self, request):
         print(request.GET)
-        id = request.GET.get('id')
+        slug = request.GET.get('slug')
 
-        post = get_object_or_404(Post, id = id)
+        post = get_object_or_404(Post, slug = slug)
         serializer = PostSerializer(post, context={'request' : request})
 
         print(serializer.data)

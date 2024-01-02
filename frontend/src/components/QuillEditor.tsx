@@ -137,7 +137,6 @@ const QuillEditor: React.FC = memo(({ content, setContent, backend, quillRef }) 
             modules = {modules}
             formats = {formats}
             value={content}
-            // onChange={handleChange}
             />
         </div>
     )
