@@ -39,8 +39,8 @@ const Navbar: React.FC<NavbarProps> = () => {
                 <PiGameControllerFill className="flex-none overflow:hidden md:w-auto" color='white' size='36' />
               )}
             </Link>
-            <div className="relative flex items-center ml-auto">
-              <nav className="text-md leading-6 font-semibold text-slate-700 dark:text-slate-200">
+            <div className="relative flex items-center ml-10">
+              <nav className="text-lg leading-6 font-semibold text-slate-700 dark:text-slate-200">
                 <ul className="flex space-x-8">
                   {links[category].map(([title, url]) => (
                     <li className="hover:text-sky-300">
@@ -49,7 +49,16 @@ const Navbar: React.FC<NavbarProps> = () => {
                   ))}
                 </ul>
               </nav>
-              <div className="flex color-gray items-center border-l border-slate-200 ml-6 pl-6">
+            </div>
+            <div className='ml-auto'>
+              <div className="flex color-gray items-center border-l border-slate-200 first-line:pl-6">
+                <div className="px-2">
+
+                    <Link className="text-white" to='/signin'>
+                    Login 
+                    </Link>
+
+                </div>
                 <button
                   className={`flex bg-${
                     category === 'work' ? 'red-900' : 'sky-900'

@@ -5,7 +5,7 @@ import Navbar from './Navbar'
 const Layout: React.FC = () => {
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col bg-gray-50">
       {/* 현재 h = 15 차지 */}
       <Navbar className="absolute top-0 left-0 w-full" /> 
       <div className="flex flex-row h-screen mt-4">

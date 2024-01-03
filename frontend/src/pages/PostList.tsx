@@ -97,27 +97,29 @@ const PostList: React.FC = () => {
                 </div>
             {/* 페이지네이션 */}
 
-                    <div className="flex-none b-0">
-                    {posts.length ? (
-                            <>
-                                {/* index는 0부터 시작한다. */}
-                                {Array.from({ length : endPage - startPage + 1 }).map((_, index) => {
-                                        const page = startPage + index;
-                                        return (
-                                            <button key={page} 
-                                            onClick={() => navigate(`/${category}/${section}/${page}`)}
-                                            className = 'px-3 py-2'>
-                                                {page}
-                                            </button>
-                                        );
-                                    }
-                                    )
-                                }
+                    <div className="flex justify-between flex-none b-0">
+                        <div>
+                            {posts.length ? (
+                                    <>
+                                        {/* index는 0부터 시작한다. */}
+                                        {Array.from({ length : endPage - startPage + 1 }).map((_, index) => {
+                                                const page = startPage + index;
+                                                return (
+                                                    <button key={page} 
+                                                    onClick={() => navigate(`/${category}/${section}/${page}`)}
+                                                    className = 'px-3 py-2 shadow'>
+                                                        {page}
+                                                    </button>
+                                                );
+                                            }
+                                            )
+                                        }
 
-                            </>
-                        ) 
-                        : <></>
-                    }
+                                    </>
+                                ) 
+                                : <></>
+                            }
+                        </div>
                         <button onClick={() => handleWritePost(category, section)}
                             className='float-right mt-0 px-3 py-2 font-bold outline-none focus:ring-4 shadow-lg transform active:scale-90 transition-transform'>
                             <HiOutlinePencilSquare class='inline' size='24'/>글쓰기

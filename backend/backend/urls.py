@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r'^api/blog/', include('blog.urls')),
     re_path(r'^api/image/', include('imageapp.urls')),
+    re_path(r'^api/user/', include('authuser.urls')),
 ]
 
 if settings.DEBUG:

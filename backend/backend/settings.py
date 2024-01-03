@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework', # Django에서 RESTful API 작성을 도와줌,
     'blog.apps.BlogConfig',
     'imageapp.apps.ImageappConfig',
+    'authuser.apps.AuthuserConfig',
 ]
 
 MIDDLEWARE = [

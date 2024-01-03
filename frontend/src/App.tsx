@@ -9,6 +9,8 @@ import PostDetail from './pages/PostDetail';
 import PostList from './pages/PostList'
 import CreatePost from './pages/CreatePost';
 import Home from './pages/Home';
+import SignIn from './pages/SignIn';
+import SignUp from './pages/SignUp';
 
 import ScrollToTop from './components/ScrollToTop';
 
@@ -23,14 +25,17 @@ const App: React.FC = () => {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Intro />} />
-        <Route path=":category/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path=":section/:page" element={<PostList />} />
-          <Route path=":section/post/create" element={<CreatePost />} />
-          <Route path=":section/post/:slug" element={<PostDetail />} />
+        <Route path="/" element={<Layout />}>
+          <Route path=":category">
+            <Route index element={<Home />} />
+            <Route path=":section/:page" element={<PostList />} />
+            <Route path=":section/post/create" element={<CreatePost />} />
+            <Route path=":section/post/:slug" element={<PostDetail />} />
+          </Route>
+          <Route path="signin" element={<SignIn />}/>
+          <Route path="signup" element={<SignUp />}/>
+          <Route path="not-found" element={<NotFound />} />
         </Route>
-        <Route path="not-found" element={<NotFound />} />
-
       </Routes>
     </Router>
   );
