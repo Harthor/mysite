@@ -1,16 +1,19 @@
 from django.db import models
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from django.utils.text import slugify
 from django.db.models import Max # obj['컬럼명']으로 최대값을 가져옴
+from .utils import subsection_validator
+
+from authuser.models import MyUser
 
 class Category(models.Model):
-    name = models.CharField(max_length = 64, null = False)
+    name = models.CharField(max_length = 16, null = False)
 
     def __str__(self):
         return self.name
 
 class Section(models.Model):
-    name = models.CharField(max_length = 64, null = False)
+    name = models.CharField(max_length = 16, null = False)
     category = models.ForeignKey(Category, on_delete = models.CASCADE)
 
     def __str__(self):
@@ -20,9 +23,8 @@ class Section(models.Model):
         return str(self.subsection)
 
 class Subsection(models.Model):
-    name = models.CharField(max_length = 64, null = False, unique = True)
+    name = models.CharField(max_length = 16, null = False, unique = True, validators = [subsection_validator])
     section = models.ForeignKey(Section, on_delete = models.CASCADE)
-
 
     def __str__(self):
         return self.name
@@ -45,7 +47,8 @@ class Post(models.Model):
     )
     subsection = models.ForeignKey(Subsection, on_delete = models.CASCADE)
     content = models.TextField(blank = False, null = False) 
-    author = models.ForeignKey(User, default = None, on_delete = models.CASCADE)
+    author = models.ForeignKey(MyUser, default = None, on_delete = models.CASCADE, null = True)
+
     # auto_now 시리즈는 save 메서드에 별도로 구현하지 않게 해준다.
     created_at = models.DateTimeField(auto_now_add = True, blank = True, null = False)
     edited_at = models.DateTimeField(auto_now = False, blank = True, null = True)
@@ -92,6 +95,6 @@ class Post(models.Model):
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete = models.CASCADE)
-    author = models.ForeignKey(User, on_delete = models.CASCADE)
+    author = models.ForeignKey(MyUser, on_delete = models.CASCADE)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add = True)

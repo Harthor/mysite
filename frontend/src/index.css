@@ -82,3 +82,27 @@ button:focus-visible {
   border-color: black;
   border-width: 1;
 }
+
+
+.form-control {
+  @apply relative mb-10; /* margin-bottom: 1rem; */
+}
+
+.form-label {
+  @apply absolute left-2.5 bg-white px-1 text-sm font-semibold text-gray-500; /* top: -10px; left: 10px; */
+  top: -10px;
+}
+
+.form-input {
+  @apply py-3 px-3 rounded border w-full text-sm text-gray-800 shadow-sm 
+  border-gray-500 outline-gray-500 focus:valid:border-gray-700 focus:valid:outline-gray-700;
+}
+
+.form-input-valid {
+  @apply 
+  border-green-500 outline-green-500 focus:valid:border-green-600 focus:valid:outline-green-600;
+}
+
+.form-input-invalid {
+  @apply border-red-500 outline-red-500 focus:valid:border-red-600 focus:valid:outline-red-600;
+}

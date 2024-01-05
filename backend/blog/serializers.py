@@ -2,10 +2,13 @@ from rest_framework import serializers
 from .models import *
 from django.utils import timezone
 
+from .utils import subsection_validator
+from authuser.models import MyUser
+
 
 class PostSerializer(serializers.ModelSerializer):
 
-    author = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    author = serializers.PrimaryKeyRelatedField(queryset=MyUser.objects.all())
     category = serializers.CharField()
     section = serializers.CharField()
     subsection = serializers.CharField()
@@ -54,7 +57,15 @@ class PostSerializer(serializers.ModelSerializer):
                                    **validated_data)
         return post
 
-class SubsectionSerializer(serializers.ModelSerializer):
+class SubsectionListSerializer(serializers.ModelSerializer):
+    section = serializers.CharField(source='get_section_as_string')
+
+    class Meta:
+        model = Subsection
+        fields = '__all__'
+
+class SubsectionCreateSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(validators = [subsection_validator])
     section = serializers.CharField(source='get_section_as_string')
 
     class Meta:

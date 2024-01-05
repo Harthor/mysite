@@ -26,26 +26,35 @@ const CreatePost: React.FC = ()=> {
         setSubsections(response.data.subsection);
       }
 
+    const validateSubsection = (subsection: string) => {
+        // 한국어, 일본어(유니코드) & 영어, 숫자만 2~16글자 입력 가능
+        return /^[\uAC00-\uD7AF\u3040-\u30FF\u31F0-\u31FFa-zA-Z0-9]{2,16}$/.test(subsection)
+    }
+
     // subsection이 없는 경우 등록
     const addSubsection = async () => {
         try {
           const formData = new FormData();
+
+          if (isAddingNewSubsection && !validateSubsection(subsection)) {
+            throw Error("소분류는 2글자 ~ 16글자의 한,일,영,숫자 입력 가능합니다.")
+          }
+
           formData.append('subsection', subsection)
           formData.append('section', section)
 
           const response = await axios.post(backend + `/api/blog/subsection/create`, formData);
         if (response.status === 201) {
-            console.log('소분류가 성공적으로 생성되었습니다.');
             setSubsections((prevSubSections) => [...prevSubSections, subsection]);
         } else {
-            console.log('소분류 생성 실패');
+           alert('소분류 생성 실패');
         }
         } catch (e) {
-            console.log(`addSubsection 에러 발생 - ${e}`)
+            alert(`addSubsection 에러 발생 - ${e.message}`)
         }
     }
 
-    const _validateTitle = () => {
+    const validateTitle = (title) => {
         // 슬러그를 생성할 수 있는 제목인지 검사한다.
         const isValidSlug = title.match(/^[a-zA-Z가-힣0-9\s]*$/);
         return isValidSlug;
@@ -53,6 +62,8 @@ const CreatePost: React.FC = ()=> {
 
     const validateInput = (title, subsection, content) => {
         console.log(title, subsection, content)
+
+        validateTitle(title);
 
         if (title === "" || subsection === "" || content === "") {
             throw new Error("제목, 소분류, 내용이 모두 채워져야 함")
@@ -91,7 +102,7 @@ const CreatePost: React.FC = ()=> {
                alert('글 생성에 실패했습니다.');
             } 
         } catch (e) { 
-            alert('글 생성 중 에러 발생 : ' + e.message)
+            alert('handleSubmit 에러 발생 : ' + e.message)
         }
     } 
 

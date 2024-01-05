@@ -62,7 +62,7 @@ class PostCreateView(APIView):
         data = request.data.copy()
 
         # 객체로 넣어야 함
-        data['author'] = User.objects.get(username='dowrave').id
+        data['author'] = MyUser.objects.get(username='dowrave').id
         data['created_at'] = timezone.now()
 
         # 안전한 HTML 보장하기
@@ -97,7 +97,7 @@ class SubsectionListView(APIView):
         section = request.GET.get('section')
         section = get_object_or_404(Section, name__iexact = section)
         subsections = Subsection.objects.filter(section = section) # 연결된 모든 객체 반환
-        serializer = SubsectionSerializer(subsections, many = True)
+        serializer = SubsectionListSerializer(subsections, many = True)
 
         return Response({'subsection' : serializer.data},
                         status = status.HTTP_200_OK)
@@ -111,14 +111,16 @@ class SubsectionCreateView(APIView):
             subsection = request.data.get('subsection')
 
             section = Section.objects.get(name = section)
-
+            # 만드는 과정이 꼭 있어야 함
             subsection = Subsection.objects.create(name = subsection, 
                                                    section = section)
             
-            serializer = SubsectionSerializer(subsection)
+            serializer = SubsectionCreateSerializer(subsection)
+
             return Response(serializer.data, status = status.HTTP_201_CREATED)
         
         except Exception as e:
+            print(e)
             return Response({'error' : str(e)}, status = status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         
