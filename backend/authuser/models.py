@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.models import Group, Permission
 
 class MyUserManager(BaseUserManager):
-    def create_user(self, username, email, password):
+    def create_user(self, username, email, password, nickname):
         if not username:
             raise ValueError("Username(유저입력아이디)은 필수입니다.")
         if not email:
@@ -15,6 +15,7 @@ class MyUserManager(BaseUserManager):
         user = self.model(
             username = username,
             email = self.normalize_email(email),
+            nickname = nickname
         )
 
         user.set_password(password) # 비밀번호 암호화
@@ -47,33 +48,30 @@ class MyUser(AbstractUser):
         unique = True
     )
     nickname = models.CharField(
-                            # min_length = 2,
-                            max_length = 8, 
-                            null = True, 
-                            blank = True, 
+                            max_length = 6, 
                             unique = True,
-                            validators = [RegexValidator(regex='^[a-zA-Z0-9가-힣]+$',
-                                            message="닉네임은 한글, 영어 대소문자, 숫자로 2~8글자가 가능합니다.")])
+                            validators = [RegexValidator(regex='^\p{L}\p{N}]{2,6}$',
+                                            message="닉네임은 한글, 숫자, 영어 2~6글자입니다.")])
 
-    # 사용자 그룹화 - 그룹에 권한 할당 & 특정 작업을 수행하도록 하게 함
-    groups = models.ManyToManyField(
-        Group,
-        verbose_name=('groups'),
-        blank=True,
-        related_name="myuser_set",  # 커스텀 related_name
-        help_text=(
-            'The groups this user belongs to. A user will get all permissions '
-            'granted to each of their groups.'
-        ),
-    )
-    # 권한 - 권한 자체
-    user_permissions = models.ManyToManyField(
-        Permission,
-        verbose_name=('user permissions'),
-        blank=True,
-        related_name="myuser_set",  # 커스텀 related_name
-        help_text=('Specific permissions for this user.'),
-    )
+    # # 사용자 그룹화 - 그룹에 권한 할당 & 특정 작업을 수행하도록 하게 함
+    # groups = models.ManyToManyField(
+    #     Group,
+    #     verbose_name=('groups'),
+    #     blank=True,
+    #     related_name="myuser_set",  # 커스텀 related_name
+    #     help_text=(
+    #         'The groups this user belongs to. A user will get all permissions '
+    #         'granted to each of their groups.'
+    #     ),
+    # )
+    # # 권한 - 권한 자체
+    # user_permissions = models.ManyToManyField(
+    #     Permission,
+    #     verbose_name=('user permissions'),
+    #     blank=True,
+    #     related_name="myuser_set",  # 커스텀 related_name
+    #     help_text=('Specific permissions for this user.'),
+    # )
 
     objects = MyUserManager()
 
@@ -98,3 +96,21 @@ class MyUser(AbstractUser):
             if len(self.nickname) < 2:
                 raise ValidationError("닉네임의 최소 길이는 2글자입니다.")
         super(MyUser, self).save(*args, **kwargs)
+
+
+class EmailVerification(models.Model):
+    """
+    이메일 인증을 위한 모델
+    """
+    email = models.EmailField(unique=True) # 가입도 있기 때문에 외래키 쓰면 X
+    code = models.CharField(max_length = 6)
+    created_at = models.DateTimeField(auto_now_add = True)
+
+    def __str__(self):
+        return f'{self.user.email} - {self.code}'
+    
+    def verify(self):
+        """
+        인증 완료시 코드 제거
+        """
+        self.delete()

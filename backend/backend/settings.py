@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+from .emailpw import EMAIL_HOST_PASSWORD
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -155,3 +156,14 @@ LOGGING = {
         'level' : 'INFO',
     }
 }
+
+
+# 인증 메일을 보내기 위한 이메일 설정
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER =  'dowrave@gmail.com'
+EMAIL_HOST_PASSWORD = EMAIL_HOST_PASSWORD
+
+DEFAULT_FROM_EMAIL = 'dowrave@gmail.com' # 기본 발신자 주소

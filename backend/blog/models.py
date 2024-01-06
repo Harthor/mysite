@@ -74,7 +74,7 @@ class Post(models.Model):
                 self.slug = f"{self.slug}-{max_slug}" 
 
         if not self.author_id:
-            self.author = User.objects.get(username='dowrave')
+            self.author = MyUser.objects.get(username='dowrave')
         
         super().save(*args, **kwargs)
     
