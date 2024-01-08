@@ -4,10 +4,11 @@ import App from './App.tsx'
 import './index.css'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/tokyo-night-dark.css';
+import { Provider } from 'react-redux';
+import store from './store.ts';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  // <React.StrictMode>
+  <Provider store={store}>
     <App />
-  // </React.StrictMode> 
-  // document.querySelector('#root')
+  </Provider>
 )

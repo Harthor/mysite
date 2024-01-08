@@ -186,7 +186,20 @@ const SignUp = () => {
         }
     }
 
+    useEffect(() => {
+        // 마우스 버튼이 떼어졌을 때 실행할 핸들러
+        const handleMouseUp = () => {
+            setShowPassword(false);
+        };
 
+        // window에 mouseup 이벤트 리스너 추가
+        window.addEventListener('mouseup', handleMouseUp);
+
+        // 컴포넌트 언마운트 시 이벤트 리스너 제거
+        return () => {
+            window.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, []);
 
     useEffect(() => {
         setEmailAvailable(false);
@@ -278,7 +291,7 @@ const SignUp = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
-                        <span onMouseDown={() => setShowPassword(true)} onMouseUp={() => setShowPassword(false)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
+                        <span onMouseDown={() => setShowPassword(true)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
                             <svg className="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             {showPassword ? (
                                 <IoIosEye size="24"/>
@@ -344,7 +357,7 @@ const SignUp = () => {
                         />
                         <button
                             type='button'
-                            className="ml-2 text-xs whitespace-nowrapbg-blue-500 text-white font-bold p-2 rounded"
+                            className="ml-2 text-xs whitespace-nowrap bg-blue-500 text-white font-bold p-2 rounded"
                             onClick={handleVerifyCode}>
                             인증 확인
                         </button>
@@ -354,7 +367,7 @@ const SignUp = () => {
                 </div>
                 <button 
                 disabled={!canSubmit}
-                className={`mt-10 float-right whitespace-nowrap ${!canSubmit() ? "bg-gray-300 hover:appearance-none" :"bg-blue-500 hover:bg-blue-700"} text-white font-bold p-2 rounded focus:outline-none focus:shadow-outline`} 
+                className={`submit-button mt-10 float-right ${!canSubmit() ? "bg-gray-300 hover:appearance-none" :"bg-blue-500 hover:bg-blue-700"}`} 
                 onClick={handleSubmit}
                 type="submit">
                     회원 가입

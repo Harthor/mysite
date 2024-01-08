@@ -4,6 +4,7 @@ import ReactQuill from 'react-quill'
 import axios from 'axios'
 import hljs from 'highlight.js'
 import QuillEditor from '../components/QuillEditor'
+import { HiOutlinePencilSquare } from 'react-icons/hi2'
 
 const CreatePost: React.FC = ()=> {
     const [title, setTitle] = useState('')
@@ -167,7 +168,7 @@ const CreatePost: React.FC = ()=> {
         </div>
             
         <div className='flex-1 float-right mt-2'>
-          <button className="bg-blue-600 text-white" onClick={handleSubmit}>Submit</button>
+          <button className="submit-button" onClick={handleSubmit}><HiOutlinePencilSquare class='inline' size='24'/>등록</button>
         </div>
       </div>
     </section>

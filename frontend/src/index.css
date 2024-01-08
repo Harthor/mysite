@@ -106,3 +106,9 @@ button:focus-visible {
 .form-input-invalid {
   @apply border-red-500 outline-red-500 focus:valid:border-red-600 focus:valid:outline-red-600;
 }
+
+.submit-button {
+  @apply flex items-center justify-center whitespace-nowrap font-bold py-2 px-4 rounded 
+  bg-blue-500 hover:bg-blue-700 text-white hover:outline-none;
+}
+

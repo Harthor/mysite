@@ -1,5 +1,5 @@
-import { BrowserRouter as Router, Route, Routes, Navigate} from 'react-router-dom'
-import React from 'react';
+import { BrowserRouter as Router, Route, Routes, useNavigate} from 'react-router-dom'
+import React , { useEffect } from 'react';
 
 import Layout from './components/Layout';
 import NotFound from './components/NotFound';
@@ -13,12 +13,27 @@ import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 
 import ScrollToTop from './components/ScrollToTop';
+import { loginUser } from './actions/authActions';
 
 import 'highlight.js/styles/github.css';
+import { useDispatch } from 'react-redux';
 
 
 
 const App: React.FC = () => {
+
+  const dispatch = useDispatch();
+
+  // 로그인 유지하기
+  useEffect(() => {
+    const username = localStorage.getItem('username');
+    const token = localStorage.getItem('userToken');
+
+    if (username && token) {
+      dispatch(loginUser(username, token));
+    }
+    
+  }, [dispatch])
 
   return (
     <Router>

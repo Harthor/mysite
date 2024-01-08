@@ -4,8 +4,13 @@ from datetime import timedelta
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework_jwt.settings import api_settings
 from .serializers import UserSerializer
 from .models import MyUser, EmailVerification
+
+
+# 로그인 관련
+from django.contrib.auth import authenticate, login, logout
 
 # 이메일 구현 로직
 from django.conf import settings
@@ -114,10 +119,6 @@ class VerifyEmailView(APIView):
 
 class RegisterUserView(APIView):
     def post(self, request, *args, **kwargs):
-        # username = request.data.get('username')
-        # password = request.data.get('password')
-        # email = request.data.get('email')
-        # nickname = request.data.get('nickname')
         print(request.data)
         serializer = UserSerializer(data = request.data)
         if serializer.is_valid():
@@ -126,3 +127,31 @@ class RegisterUserView(APIView):
                             status = status.HTTP_201_CREATED)
         return Response({'error' : '에러가 발생했습니다.'},
                         status = status.HTTP_400_BAD_REQUEST)
+
+class LoginView(APIView):
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        user = authenticate(request,
+                            username = username,
+                            password = password, )
+        
+        if user is not None:
+
+            jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+            jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+
+            payload = jwt_payload_handler(user)
+            token = jwt_encode_handler(payload)
+
+            # username이 고유할 때만 사용 가능
+            user = MyUser.objects.get(username = username)
+            nickname = user.nickname
+            
+            return Response({'token' : token,
+                             'nickname' : nickname},
+                            status = status.HTTP_200_OK)
+        
+        return Response({'error' : '인증 오류가 발생했습니다.'},
+                        status = status.HTTP_400_BAD_REQUEST)
+    
