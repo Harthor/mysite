@@ -5,6 +5,8 @@ from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework import status, generics
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 from .serializers import *
@@ -58,17 +60,34 @@ class PostListView(APIView):
                          }, status=status.HTTP_200_OK)
 
 class PostCreateView(APIView):
+    permission_classes = [IsAuthenticated] # 인증되지 않은 사용자는 401 에러 반환
+    authentication_classes = [JWTAuthentication]
+
     def post(self, request, *args, **kwargs):
-        data = request.data.copy()
+
+        jwt_user = request.user # "액세스 토큰"에 들어 있는 유저를 확인함
+
+        if not jwt_user:
+            return Response({"error" : "유효하지 않은 토큰입니다."}, status = status.HTTP_401_UNAUTHORIZED)
+
+        nickname = request.data.get('author')
+        if not nickname:
+            return Response({'error' : '글쓴이 이름이 등록되지 않았습니다'}, 
+                            status = status.HTTP_400_BAD_REQUEST)
+        try:
+            user = MyUser.objects.get(nickname = nickname)
+        except MyUser.DoesNotExist:
+            return Response({'error' : '해당하는 User 정보가 없습니다.'}, 
+                            status = status.HTTP_404_NOT_FOUND)
+        
+        data = request.data.copy() # request.data는 불변 객체로, 수정 불가능
 
         # 객체로 넣어야 함
-        data['author'] = MyUser.objects.get(username='dowrave').id
+        data['author'] = user.id
         data['created_at'] = timezone.now()
 
         # 안전한 HTML 보장하기
         data['content'] = escape(data['content'])
-
-        print(data)
 
         serializer = PostSerializer(data = data, context = {'request' : request})
         if serializer.is_valid():

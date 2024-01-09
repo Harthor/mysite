@@ -83,9 +83,10 @@ const Navbar: React.FC<NavbarProps> = () => {
                     } hover:bg-${
                       category === 'work' ? 'red-500' : 'sky-500'
                     }`}
-                    onClick={() => handleCategoryClick(category === 'work' ? 'hobby' : 'work')}
+                    onClick={() => handleCategoryClick(category === 'work' ? 'hobby' : 'work' )}
                   >
-                    <PiBookOpenTextBold color="white" />
+                    {category === 'work' ? <PiGameControllerFill color='white' size='20'/> 
+                    : <PiBookOpenTextBold color='white' size='20'/>}
                   </button>
                 </div>
               </div>
@@ -93,7 +94,6 @@ const Navbar: React.FC<NavbarProps> = () => {
           </div>
         </div>
       </div>
-
   );
 };
 

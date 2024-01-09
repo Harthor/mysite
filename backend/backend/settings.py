@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 from .emailpw import EMAIL_HOST_PASSWORD
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders', # CORS (크로스오리진 설정)
     'rest_framework', # Django에서 RESTful API 작성을 도와줌,
+    'rest_framework_simplejwt', 
     'blog.apps.BlogConfig',
     'imageapp.apps.ImageappConfig',
     'authuser.apps.AuthuserConfig',
@@ -62,6 +64,17 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173' # React-Vite 개발 서버 주소
 ]
 
+# 리프레쉬 토큰 사용 -> 액세스 토큰 시간을 길게 잡을 필요 없음
+# SIMPLE_JWT = {
+#     'ACCESS_TOKEN_LIFETIME' : timedelta(hours = 6), # 디폴트 1시간
+# }
+
+# JWT 인증 처리하기
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES' : (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -167,3 +180,4 @@ EMAIL_HOST_USER =  'dowrave@gmail.com'
 EMAIL_HOST_PASSWORD = EMAIL_HOST_PASSWORD
 
 DEFAULT_FROM_EMAIL = 'dowrave@gmail.com' # 기본 발신자 주소
+

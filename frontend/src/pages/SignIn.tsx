@@ -26,10 +26,11 @@ const SignIn = () => {
                 alert('로그인에 성공했습니다.')
 
                 dispatch(loginUser(response.data.nickname, response.data.token));
-                localStorage.setItem('username', response.data.nickname);
-                localStorage.setItem('userToken', response.data.token)
+                localStorage.setItem('nickname', response.data.nickname);
+                localStorage.setItem('accessToken', response.data.access);
+                localStorage.setItem('refreshToken', response.data.refresh);
 
-                navigate('/')
+                navigate(-1)
             }
             else { alert('로그인에 실패했습니다.') }
         } catch (e) {

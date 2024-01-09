@@ -4,20 +4,17 @@ from datetime import timedelta
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework_jwt.settings import api_settings
+from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import UserSerializer
 from .models import MyUser, EmailVerification
 
-
 # 로그인 관련
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate
 
 # 이메일 구현 로직
 from django.conf import settings
 from django.core.mail import send_mail
 import logging
-
-# 보안 강화
 import random
 
 logger = logging.getLogger(__name__)
@@ -132,25 +129,18 @@ class LoginView(APIView):
     def post(self, request):
         username = request.data.get('username')
         password = request.data.get('password')
-        user = authenticate(request,
-                            username = username,
-                            password = password, )
+        user = authenticate(username = username,
+                            password = password )
         
         if user is not None:
 
-            jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
-            jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
-
-            payload = jwt_payload_handler(user)
-            token = jwt_encode_handler(payload)
-
-            # username이 고유할 때만 사용 가능
-            user = MyUser.objects.get(username = username)
-            nickname = user.nickname
-            
-            return Response({'token' : token,
-                             'nickname' : nickname},
-                            status = status.HTTP_200_OK)
+            # 리프레쉬 토큰 설명은 TIL - 프로젝트 폴더에 정리
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'refresh' : str(refresh),
+                'access' : str(refresh.access_token),
+                'nickname' : user.nickname
+            }, status = status.HTTP_200_OK)
         
         return Response({'error' : '인증 오류가 발생했습니다.'},
                         status = status.HTTP_400_BAD_REQUEST)

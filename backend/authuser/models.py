@@ -5,6 +5,9 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.models import Group, Permission
 
 class MyUserManager(BaseUserManager):
+    """
+    커스텀 모델을 쓸 경우 사용자 관리 메서드를 제공하는 매니저 클래스 2개를 구현해야 한다.
+    """
     def create_user(self, username, email, password, nickname):
         if not username:
             raise ValueError("Username(유저입력아이디)은 필수입니다.")
@@ -53,33 +56,14 @@ class MyUser(AbstractUser):
                             validators = [RegexValidator(regex='^\p{L}\p{N}]{2,6}$',
                                             message="닉네임은 한글, 숫자, 영어 2~6글자입니다.")])
 
-    # # 사용자 그룹화 - 그룹에 권한 할당 & 특정 작업을 수행하도록 하게 함
-    # groups = models.ManyToManyField(
-    #     Group,
-    #     verbose_name=('groups'),
-    #     blank=True,
-    #     related_name="myuser_set",  # 커스텀 related_name
-    #     help_text=(
-    #         'The groups this user belongs to. A user will get all permissions '
-    #         'granted to each of their groups.'
-    #     ),
-    # )
-    # # 권한 - 권한 자체
-    # user_permissions = models.ManyToManyField(
-    #     Permission,
-    #     verbose_name=('user permissions'),
-    #     blank=True,
-    #     related_name="myuser_set",  # 커스텀 related_name
-    #     help_text=('Specific permissions for this user.'),
-    # )
 
     objects = MyUserManager()
 
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email',] 
+    REQUIRED_FIELDS = ['email', 'nickname'] 
 
     def __str__(self):
-        return self.nickname if self.nickname else self.username
+        return self.nickname
     
     # 권한 여부 확인(perm : 권한, obj : 권한과 관련된 객체)
     def has_perm(self, perm, obj = None):

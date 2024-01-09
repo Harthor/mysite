@@ -27,7 +27,7 @@ const App: React.FC = () => {
   // 로그인 유지하기
   useEffect(() => {
     const username = localStorage.getItem('username');
-    const token = localStorage.getItem('userToken');
+    const token = localStorage.getItem('token');
 
     if (username && token) {
       dispatch(loginUser(username, token));

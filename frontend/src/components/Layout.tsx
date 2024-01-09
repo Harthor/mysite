@@ -5,10 +5,10 @@ import Navbar from './Navbar'
 const Layout: React.FC = () => {
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col h-screen bg-gray-50">
       {/* 현재 h = 15 차지 */}
       <Navbar className="absolute top-0 left-0 w-full" /> 
-      <div className="flex flex-row space-x-5 w-full mt-4 h-full bg-gray-50">
+      <div className="flex flex-row space-x-5 w-full mt-4 h-full ">
         {/* 본문 */}
         <div className="lg:w-1/8">
           <h1>카테고리 진열장</h1>

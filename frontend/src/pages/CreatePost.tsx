@@ -5,6 +5,8 @@ import axios from 'axios'
 import hljs from 'highlight.js'
 import QuillEditor from '../components/QuillEditor'
 import { HiOutlinePencilSquare } from 'react-icons/hi2'
+import { useSelector } from 'react-redux'
+import { getAccessToken } from '../services/getAccessToken'
 
 const CreatePost: React.FC = ()=> {
     const [title, setTitle] = useState('')
@@ -13,12 +15,22 @@ const CreatePost: React.FC = ()=> {
     const [content, setContent] = useState('');
     const { category, section } = useParams()
     const [isAddingNewSubsection, setIsAddingNewSubsection] = useState(true);
+    const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
+    const nickname = useSelector(state => state.auth.user);
+    
     const quillRef = useRef<ReactQuill>(null);
     const backend = 'http://localhost:8000';
     const navigate = useNavigate();
 
     const handleSubsectionChange = (e) => {
         setSubsection(e.target.value);
+    }
+
+    const checkIsAuthenticated = () => {
+        if (!isAuthenticated) {
+            alert('로그인 한 뒤에 이용 가능합니다.')
+            navigate(-1)
+        }
     }
 
     // section(게시판)에 따라 subsection 불러오기
@@ -75,6 +87,8 @@ const CreatePost: React.FC = ()=> {
     const handleSubmit = async () => {
         try {
 
+            const token = await getAccessToken() // await를 써야 내용물을 받을 수 있음
+
             const currentContent = quillRef.current?.getEditor().root.innerHTML;
             const parsedContent = currentContent.replace(/<[^>]*>/g, '').replace(/\s+/g, '');
 
@@ -93,8 +107,15 @@ const CreatePost: React.FC = ()=> {
             formData.append('content', currentContent);
             formData.append('category', category);
             formData.append('section', section);
+            formData.append('author', nickname);
 
-            const response = await axios.post(backend + '/api/blog/post/create', formData)
+            const response = await axios.post(backend + '/api/blog/post/create',  // URL
+                                                formData, // body 데이터
+                                                { headers: { // options
+                                                    Authorization: `Bearer ${token}`
+                                                }
+                        });
+
           
             if (response.status === 201) {
                 alert('글이 성공적으로 생성되었습니다.');
@@ -109,9 +130,11 @@ const CreatePost: React.FC = ()=> {
 
 
     useEffect(() => {
+
+        checkIsAuthenticated()
         fetchSubsections();
         // 가져온 1번째 subsection을 기본 subsection으로 지정함
-    }, [])
+    }, [isAuthenticated])
 
     useEffect(() => {
         if (subsections && subsections.length > 0) {
@@ -166,7 +189,8 @@ const CreatePost: React.FC = ()=> {
             <label>본문</label>
             <QuillEditor content={content} setContent={setContent} backend={backend} quillRef={quillRef} />
         </div>
-            
+        
+        
         <div className='flex-1 float-right mt-2'>
           <button className="submit-button" onClick={handleSubmit}><HiOutlinePencilSquare class='inline' size='24'/>등록</button>
         </div>

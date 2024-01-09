@@ -4,12 +4,14 @@ import axios from 'axios';
 import QuillRead from '../components/QuillRead';
 import { CiBoxList, CiEdit } from "react-icons/ci";
 import { RiDeleteBinLine } from "react-icons/ri";
-
+import { useSelector } from 'react-redux';
 
 const PostDetail: React.FC = () => {
     const { category, section, slug } = useParams(); 
     const [post, setPost] = useState<Post[]>();
     const navigate = useNavigate();
+    const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
+    const userName = useSelector(state => state.auth.user);
 
     useEffect(() => {
         fetchData();
@@ -50,15 +52,16 @@ const PostDetail: React.FC = () => {
                 <div className='px-3'> 
                     <QuillRead htmlContent = {post?.content}/>
                     <div className='mt-1'>
-                    <button className='flex items-center justify-center float-left text-xs bg-gray-100 font-semibold mr-2 px-2' onClick={navigateToEditPost}>
-                        <CiEdit class="inline mr-1" size="20"/> 수정
-                    </button>
-                    <button className='flex items-center justify-center float-left text-xs bg-red-300 font-semibold px-2' >
-                        <RiDeleteBinLine class="inline mr-1" size="20"/> 삭제
-                    </button>
-                    <button className='flex items-center justify-center float-right text-xs bg-blue-200 font-semibold ml-2 px-2' onClick={navigateToList}>
-                        <CiBoxList class="inline mr-1" size="20"/> 게시판
-                    </button>
+                        
+                        <button className='flex items-center justify-center float-left text-xs bg-gray-100 font-semibold mr-2 px-2' onClick={navigateToEditPost}>
+                            <CiEdit class="inline mr-1" size="20"/> 수정
+                        </button>
+                        <button className='flex items-center justify-center float-left text-xs bg-red-300 font-semibold px-2' >
+                            <RiDeleteBinLine class="inline mr-1" size="20"/> 삭제
+                        </button>
+                        <button className='flex items-center justify-center float-right text-xs bg-blue-200 font-semibold ml-2 px-2' onClick={navigateToList}>
+                            <CiBoxList class="inline mr-1" size="20"/> 게시판
+                        </button>
                     </div>
                 </div>
                 </>

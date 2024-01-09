@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios'
 import { HiOutlinePencil, HiOutlinePencilSquare } from 'react-icons/hi2'
+import { useSelector } from 'react-redux';
 
 type Post = {
     slug: string;
@@ -35,6 +36,7 @@ const PostList: React.FC = () => {
     const { category, section, page } = useParams(); 
     const currentPage = parseInt(page, 10) || 1; // 문자열 -> 숫자 변환, 실패 시 1이 기본값
     const navigate = useNavigate();
+    const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
 
     const postsPerPage: number = 5;
     const paginationSize: number = 10;
@@ -77,8 +79,8 @@ const PostList: React.FC = () => {
             <h1>{section} 게시판</h1>
         </div>
         <section className='text-gray-600 body-font overflow-hidden'>
-            <div className='px-5 py-12 mx-auto'>
-                <div className='-my-8 divide-y-2 divide-gray-100'>
+            <div className='px-5 py-12 mx-auto flex flex-col'>
+                <div className='-my-8 divide-y-2 divide-gray-200 border-b border-gray-200'>
                     {/* 게시판에 글 나열 */}
                     {posts.map((post: Post) => (
                         <div className='py-8 flex flex-wrap md:flex-nowrap'>
@@ -95,9 +97,10 @@ const PostList: React.FC = () => {
                         </div>
                     ))}
                 </div>
+                
             {/* 페이지네이션 */}
 
-                    <div className="flex justify-between flex-none b-0">
+                    <div className="flex justify-between flex-none mt-10">
                         <div>
                             {posts.length ? (
                                     <>
@@ -120,10 +123,13 @@ const PostList: React.FC = () => {
                                 : <></>
                             }
                         </div>
+                        { isAuthenticated ? 
                         <button onClick={() => handleWritePost(category, section)}
-                            className='float-right mt-0 px-3 py-2 font-bold outline-none focus:ring-4 shadow-lg transform active:scale-90 transition-transform'>
-                            <HiOutlinePencilSquare class='inline' size='24'/>글쓰기
+                        className='float-right mt-0 px-3 py-2 font-bold outline-none focus:ring-4 shadow-lg transform active:scale-90 transition-transform'>
+                        <HiOutlinePencilSquare class='inline' size='24'/>글쓰기
                         </button>
+                        : ''}
+
                     </div>
                 </div>
 
